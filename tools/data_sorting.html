@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Sorting & Filtering | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .tool-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .input-section,
+      .output-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .data-input,
+      .data-output {
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      .data-input:focus,
+      .data-output:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .input-options,
+      .process-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      .option-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .option-group label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .option-group select,
+      .option-group input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      .option-group select:focus,
+      .option-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .actions-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .action-btn {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-family: "Poppins", sans-serif;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-btn:hover {
+        background: var(--primary-hover);
+      }
+
+      .action-btn.secondary {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+      }
+
+      .action-btn.secondary:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .action-btn.small {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+
+      .filter-container {
+        background: var(--bg-dark);
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid var(--border);
+      }
+
+      .filters-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+      }
+
+      .filter-type {
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .filter-value {
+        flex: 2;
+        min-width: 200px;
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      #noFiltersMessage {
+        color: var(--text-muted);
+        text-align: center;
+        padding: 10px;
+      }
+
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--primary);
+      }
+
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .frequency-container {
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .frequency-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .frequency-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      .frequency-table th,
+      .frequency-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .frequency-table th {
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .frequency-bar {
+        height: 8px;
+        background: var(--primary);
+        border-radius: 4px;
+        margin-top: 5px;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .input-options,
+        .process-options {
+          grid-template-columns: 1fr;
+        }
+
+        .actions-row {
+          flex-direction: column;
+        }
+
+        .stats-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .filter-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .filter-type,
+        .filter-value {
+          width: 100%;
+        }
+
+        .stats-container {
+          grid-template-columns: 1fr;
+        }
+      }
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home</a
+      >
+
+      <h1>Data Sorting & Filtering Tool</h1>
+      <p class="description"
+        >Sort data alphabetically or numerically, apply custom filters, remove
+        duplicates, and analyze frequencies.</p
+      >
+
+      <div class="tool-container">
+        <div class="input-section">
+          <h2 class="section-title"> <span>📝</span> Input Data </h2>
+
+          <div class="input-options">
+            <div class="option-group">
+              <label for="inputFormat">Data Format</label>
+              <select id="inputFormat">
+                <option value="auto">Auto-detect</option>
+                <option value="comma">Comma separated (CSV)</option>
+                <option value="newline">One item per line</option>
+                <option value="space">Space separated</option>
+                <option value="tab">Tab separated</option>
+              </select>
+            </div>
+
+            <div class="option-group">
+              <label for="dataType">Data Type</label>
+              <select id="dataType">
+                <option value="auto">Auto-detect</option>
+                <option value="text">Text</option>
+                <option value="number">Numbers</option>
+                <option value="mixed">Mixed</option>
+              </select>
+            </div>
+          </div>
+
+          <textarea
+            class="data-input"
+            id="dataInput"
+            placeholder="Enter or paste your data here. Examples:
+
+For comma-separated values:
+apple, banana, cherry, apple, banana
+
+For line-separated values:
+apple
+banana
+cherry
+apple
+banana
+
+For space-separated values:
+apple banana cherry apple banana"></textarea>
+
+          <div class="actions-row">
+            <button class="action-btn" onclick="processData()">
+              <span>🔄</span> Process Data
+            </button>
+
+            <button class="action-btn secondary" onclick="clearInput()">
+              <span>🗑️</span> Clear Input
+            </button>
+
+            <button class="action-btn secondary" onclick="loadSampleData()">
+              <span>📋</span> Load Sample Data
+            </button>
+          </div>
+        </div>
+
+        <div class="process-options">
+          <div class="option-group">
+            <label for="sortOrder">Sort Order</label>
+            <select id="sortOrder">
+              <option value="asc">Ascending (A-Z, 0-9)</option>
+              <option value="desc">Descending (Z-A, 9-0)</option>
+              <option value="none">No Sorting</option>
+            </select>
+          </div>
+
+          <div class="option-group">
+            <label for="caseSensitive">Case Sensitivity</label>
+            <select id="caseSensitive">
+              <option value="false">Case Insensitive</option>
+              <option value="true">Case Sensitive</option>
+            </select>
+          </div>
+
+          <div class="option-group">
+            <label for="duplicates">Duplicate Handling</label>
+            <select id="duplicates">
+              <option value="keep">Keep Duplicates</option>
+              <option value="remove">Remove Duplicates</option>
+              <option value="highlight">Highlight Duplicates</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-container">
+          <div class="filters-title">
+            <h3>Custom Filters</h3>
+            <button class="action-btn small" onclick="addFilter()">
+              <span>➕</span> Add Filter
+            </button>
+          </div>
+
+          <div id="filtersContainer">
+            <p id="noFiltersMessage"
+              >No filters applied. Click "Add Filter" to create a filter.</p
+            >
+          </div>
+        </div>
+
+        <div class="output-section">
+          <h2 class="section-title"> <span>📊</span> Results </h2>
+
+          <div class="stats-container">
+            <div class="stat-card">
+              <div class="stat-value" id="totalItems">0</div>
+              <div class="stat-label">Total Items</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-value" id="uniqueItems">0</div>
+              <div class="stat-label">Unique Items</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-value" id="duplicateItems">0</div>
+              <div class="stat-label">Duplicates</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-value" id="filteredItems">0</div>
+              <div class="stat-label">Filtered Items</div>
+            </div>
+          </div>
+
+          <textarea
+            class="data-output"
+            id="dataOutput"
+            readonly
+            placeholder="Processed data will appear here..."></textarea>
+
+          <div class="actions-row">
+            <button class="action-btn" onclick="copyToClipboard()">
+              <span>📋</span> Copy to Clipboard
+            </button>
+
+            <button class="action-btn" onclick="exportData()">
+              <span>💾</span> Export as Text File
+            </button>
+
+            <button class="action-btn secondary" onclick="analyzeFrequency()">
+              <span>📊</span> Analyze Frequency
+            </button>
+          </div>
+
+          <div
+            class="frequency-container"
+            id="frequencyContainer"
+            style="display: none">
+            <div class="frequency-title">
+              <h3>Frequency Analysis</h3>
+              <button
+                class="action-btn small secondary"
+                onclick="exportFrequencyData()">
+                <span>💾</span> Export Analysis
+              </button>
+            </div>
+
+            <table class="frequency-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Count</th>
+                  <th>Percentage</th>
+                  <th>Distribution</th>
+                </tr>
+              </thead>
+              <tbody id="frequencyTableBody">
+                <!-- Frequency data will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <script>
+      // Initialize variables
+      let originalData = [];
+      let processedData = [];
+      let currentFilters = [];
+      let frequencyData = [];
+
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Add event listeners when DOM is loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load saved data if available
+        const savedInput = localStorage.getItem("dataSortingInput");
+        if (savedInput) {
+          document.getElementById("dataInput").value = savedInput;
+        }
+
+        // Set up event listeners for options
+        document
+          .getElementById("sortOrder")
+          .addEventListener("change", function () {
+            if (processedData.length > 0) processData();
+          });
+
+        document
+          .getElementById("caseSensitive")
+          .addEventListener("change", function () {
+            if (processedData.length > 0) processData();
+          });
+
+        document
+          .getElementById("duplicates")
+          .addEventListener("change", function () {
+            if (processedData.length > 0) processData();
+          });
+
+        // Update theme toggle
+        updateThemeToggle();
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Process the input data
+      function processData() {
+        const input = document.getElementById("dataInput").value;
+
+        if (!input.trim()) {
+          showToast("Please enter some data to process.", "error");
+          return;
+        }
+
+        // Save input to localStorage
+        localStorage.setItem("dataSortingInput", input);
+
+        // Parse input data based on selected format
+        const inputFormat = document.getElementById("inputFormat").value;
+        const dataType = document.getElementById("dataType").value;
+
+        // Parse data
+        originalData = parseInputData(input, inputFormat);
+
+        // Convert to appropriate data type
+        if (
+          dataType === "number" ||
+          (dataType === "auto" && isNumericData(originalData))
+        ) {
+          originalData = originalData.map((item) => parseFloat(item));
+        }
+
+        // Process the data
+        processedData = [...originalData];
+
+        // Apply filters
+        if (currentFilters.length > 0) {
+          processedData = applyFilters(processedData);
+        }
+
+        // Handle duplicates
+        const duplicateHandling = document.getElementById("duplicates").value;
+
+        if (duplicateHandling === "remove") {
+          processedData = removeDuplicates(processedData);
+        }
+
+        // Sort data
+        const sortOrder = document.getElementById("sortOrder").value;
+        const caseSensitive =
+          document.getElementById("caseSensitive").value === "true";
+
+        if (sortOrder !== "none") {
+          processedData = sortData(processedData, sortOrder, caseSensitive);
+        }
+
+        // Update output
+        const dataOutput = document.getElementById("dataOutput");
+
+        if (duplicateHandling === "highlight") {
+          const uniqueItems = new Set();
+          const highlightedOutput = processedData.map((item) => {
+            if (uniqueItems.has(String(item))) {
+              return `${item} (duplicate)`;
+            } else {
+              uniqueItems.add(String(item));
+              return item;
+            }
+          });
+          dataOutput.value = highlightedOutput.join("\n");
+        } else {
+          dataOutput.value = processedData.join("\n");
+        }
+
+        // Update stats
+        updateStats();
+
+        // Hide frequency container if it was previously shown
+        document.getElementById("frequencyContainer").style.display = "none";
+      }
+
+      // Parse input data based on selected format
+      function parseInputData(input, format) {
+        if (!input.trim()) return [];
+
+        // Auto-detect format if set to auto
+        if (format === "auto") {
+          if (input.includes(",")) {
+            format = "comma";
+          } else if (input.includes("\n")) {
+            format = "newline";
+          } else if (input.includes("\t")) {
+            format = "tab";
+          } else {
+            format = "space";
+          }
+        }
+
+        // Parse based on format
+        let data = [];
+
+        switch (format) {
+          case "comma":
+            data = input
+              .split(",")
+              .map((item) => item.trim())
+              .filter((item) => item);
+            break;
+          case "newline":
+            data = input
+              .split(/\r?\n/)
+              .map((item) => item.trim())
+              .filter((item) => item);
+            break;
+          case "tab":
+            data = input
+              .split("\t")
+              .map((item) => item.trim())
+              .filter((item) => item);
+            break;
+          case "space":
+            data = input
+              .split(/\s+/)
+              .map((item) => item.trim())
+              .filter((item) => item);
+            break;
+        }
+
+        return data;
+      }
+
+      // Check if data is all numeric
+      function isNumericData(data) {
+        if (data.length === 0) return false;
+        return data.every((item) => !isNaN(parseFloat(item)) && isFinite(item));
+      }
+
+      // Apply filters to data
+      function applyFilters(data) {
+        if (currentFilters.length === 0) return data;
+
+        return data.filter((item) => {
+          // Item must pass all filters
+          return currentFilters.every((filter) => {
+            const stringItem = String(item);
+
+            switch (filter.type) {
+              case "contains":
+                return stringItem.includes(filter.value);
+              case "not-contains":
+                return !stringItem.includes(filter.value);
+              case "equals":
+                return stringItem === filter.value;
+              case "not-equals":
+                return stringItem !== filter.value;
+              case "starts-with":
+                return stringItem.startsWith(filter.value);
+              case "ends-with":
+                return stringItem.endsWith(filter.value);
+              case "greater-than":
+                return parseFloat(stringItem) > parseFloat(filter.value);
+              case "less-than":
+                return parseFloat(stringItem) < parseFloat(filter.value);
+              case "length-greater-than":
+                return stringItem.length > parseInt(filter.value);
+              case "length-less-than":
+                return stringItem.length < parseInt(filter.value);
+              case "regex":
+                try {
+                  const regex = new RegExp(filter.value);
+                  return regex.test(stringItem);
+                } catch (e) {
+                  return true; // If regex is invalid, don't filter
+                }
+              default:
+                return true;
+            }
+          });
+        });
+      }
+
+      // Remove duplicates from data
+      function removeDuplicates(data) {
+        return [...new Set(data.map((item) => String(item)))];
+      }
+
+      // Sort data
+      function sortData(data, order, caseSensitive) {
+        const sortedData = [...data];
+
+        sortedData.sort((a, b) => {
+          let valueA = a;
+          let valueB = b;
+
+          // Handle string comparison for case sensitivity
+          if (
+            typeof a === "string" &&
+            typeof b === "string" &&
+            !caseSensitive
+          ) {
+            valueA = a.toLowerCase();
+            valueB = b.toLowerCase();
+          }
+
+          // Handle numeric comparison
+          if (!isNaN(parseFloat(valueA)) && !isNaN(parseFloat(valueB))) {
+            valueA = parseFloat(valueA);
+            valueB = parseFloat(valueB);
+          }
+
+          // Sort based on order
+          if (order === "asc") {
+            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+          } else {
+            return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
+          }
+        });
+
+        return sortedData;
+      }
+
+      // Update statistics
+      function updateStats() {
+        const totalItems = originalData.length;
+        const uniqueItems = new Set(originalData.map((item) => String(item)))
+          .size;
+        const duplicateItems = totalItems - uniqueItems;
+        const filteredItems = originalData.length - processedData.length;
+
+        document.getElementById("totalItems").textContent = totalItems;
+        document.getElementById("uniqueItems").textContent = uniqueItems;
+        document.getElementById("duplicateItems").textContent = duplicateItems;
+        document.getElementById("filteredItems").textContent = filteredItems;
+      }
+
+      // Add a new filter
+      function addFilter() {
+        const filtersContainer = document.getElementById("filtersContainer");
+        const noFiltersMessage = document.getElementById("noFiltersMessage");
+
+        // Hide "no filters" message
+        noFiltersMessage.style.display = "none";
+
+        // Create filter ID
+        const filterId = Date.now();
+
+        // Create filter row
+        const filterRow = document.createElement("div");
+        filterRow.className = "filter-row";
+        filterRow.id = `filter-${filterId}`;
+
+        // Create filter type select
+        const filterTypeContainer = document.createElement("div");
+        filterTypeContainer.className = "option-group filter-type";
+
+        const filterTypeLabel = document.createElement("label");
+        filterTypeLabel.textContent = "Filter Type";
+        filterTypeLabel.setAttribute("for", `filter-type-${filterId}`);
+
+        const filterTypeSelect = document.createElement("select");
+        filterTypeSelect.id = `filter-type-${filterId}`;
+
+        const filterTypes = [
+          { value: "contains", text: "Contains" },
+          { value: "not-contains", text: "Does Not Contain" },
+          { value: "equals", text: "Equals" },
+          { value: "not-equals", text: "Does Not Equal" },
+          { value: "starts-with", text: "Starts With" },
+          { value: "ends-with", text: "Ends With" },
+          { value: "greater-than", text: "Greater Than (Numbers)" },
+          { value: "less-than", text: "Less Than (Numbers)" },
+          { value: "length-greater-than", text: "Length Greater Than" },
+          { value: "length-less-than", text: "Length Less Than" },
+          { value: "regex", text: "Regular Expression" },
+        ];
+
+        filterTypes.forEach((type) => {
+          const option = document.createElement("option");
+          option.value = type.value;
+          option.textContent = type.text;
+          filterTypeSelect.appendChild(option);
+        });
+
+        filterTypeContainer.appendChild(filterTypeLabel);
+        filterTypeContainer.appendChild(filterTypeSelect);
+
+        // Create filter value input
+        const filterValueContainer = document.createElement("div");
+        filterValueContainer.className = "option-group filter-value";
+
+        const filterValueLabel = document.createElement("label");
+        filterValueLabel.textContent = "Filter Value";
+        filterValueLabel.setAttribute("for", `filter-value-${filterId}`);
+
+        const filterValueInput = document.createElement("input");
+        filterValueInput.type = "text";
+        filterValueInput.type = "text";
+        filterValueInput.id = `filter-value-${filterId}`;
+
+        filterValueContainer.appendChild(filterValueLabel);
+        filterValueContainer.appendChild(filterValueInput);
+
+        // Create filter actions
+        const filterActions = document.createElement("div");
+        filterActions.className = "filter-actions";
+
+        const removeFilterBtn = document.createElement("button");
+        removeFilterBtn.className = "action-btn small secondary";
+        removeFilterBtn.innerHTML = "<span>🗑️</span>";
+        removeFilterBtn.title = "Remove Filter";
+        removeFilterBtn.onclick = function () {
+          removeFilter(filterId);
+        };
+
+        filterActions.appendChild(removeFilterBtn);
+
+        // Add all elements to filter row
+        filterRow.appendChild(filterTypeContainer);
+        filterRow.appendChild(filterValueContainer);
+        filterRow.appendChild(filterActions);
+
+        // Add filter row to container
+        filtersContainer.appendChild(filterRow);
+
+        // Add filter to currentFilters array
+        currentFilters.push({
+          id: filterId,
+          type: "contains",
+          value: "",
+        });
+
+        // Set up event listeners
+        filterTypeSelect.addEventListener("change", function () {
+          updateFilter(filterId, "type", this.value);
+        });
+
+        filterValueInput.addEventListener("input", function () {
+          updateFilter(filterId, "value", this.value);
+        });
+
+        // Focus on the value input
+        filterValueInput.focus();
+      }
+
+      // Remove a filter
+      function removeFilter(filterId) {
+        // Remove filter from DOM
+        const filterElement = document.getElementById(`filter-${filterId}`);
+        if (filterElement) {
+          filterElement.remove();
+        }
+
+        // Remove filter from currentFilters array
+        currentFilters = currentFilters.filter(
+          (filter) => filter.id !== filterId
+        );
+
+        // Show "no filters" message if no filters left
+        if (currentFilters.length === 0) {
+          document.getElementById("noFiltersMessage").style.display = "block";
+        }
+
+        // Reprocess data if needed
+        if (processedData.length > 0) {
+          processData();
+        }
+      }
+
+      // Update a filter
+      function updateFilter(filterId, property, value) {
+        // Find and update the filter
+        const filterIndex = currentFilters.findIndex(
+          (filter) => filter.id === filterId
+        );
+        if (filterIndex !== -1) {
+          currentFilters[filterIndex][property] = value;
+        }
+
+        // Reprocess data if needed
+        if (processedData.length > 0) {
+          processData();
+        }
+      }
+
+      // Copy to clipboard
+      function copyToClipboard() {
+        const dataOutput = document.getElementById("dataOutput");
+        dataOutput.select();
+        document.execCommand("copy");
+
+        showToast("Copied to clipboard!");
+      }
+
+      // Export data as text file
+      function exportData() {
+        const dataOutput = document.getElementById("dataOutput").value;
+
+        if (!dataOutput.trim()) {
+          showToast("No data to export.", "error");
+          return;
+        }
+
+        const blob = new Blob([dataOutput], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "data_School-tools-hub.vercel.app.txt";
+        a.click();
+
+        URL.revokeObjectURL(url);
+
+        showToast("Data exported successfully!");
+      }
+
+      // Export frequency data
+      function exportFrequencyData() {
+        if (frequencyData.length === 0) {
+          showToast("No frequency data to export.", "error");
+          return;
+        }
+
+        // Create CSV content
+        let csvContent = "Item,Count,Percentage\n";
+
+        frequencyData.forEach((item) => {
+          csvContent += `"${item.value}",${item.count},${item.percentage}%\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "frequency_analysis.csv";
+        a.click();
+
+        URL.revokeObjectURL(url);
+
+        showToast("Frequency data exported successfully!");
+      }
+
+      // Analyze frequency
+      function analyzeFrequency() {
+        if (processedData.length === 0) {
+          showToast("Please process some data first.", "error");
+          return;
+        }
+
+        // Count frequency of each item
+        const frequencyMap = new Map();
+
+        processedData.forEach((item) => {
+          const key = String(item);
+          frequencyMap.set(key, (frequencyMap.get(key) || 0) + 1);
+        });
+
+        // Convert to array and sort by count (descending)
+        frequencyData = Array.from(frequencyMap.entries()).map(
+          ([value, count]) => ({
+            value,
+            count,
+            percentage: ((count / processedData.length) * 100).toFixed(2),
+          })
+        );
+
+        frequencyData.sort((a, b) => b.count - a.count);
+
+        // Update frequency table
+        const frequencyTableBody =
+          document.getElementById("frequencyTableBody");
+        frequencyTableBody.innerHTML = "";
+
+        // Find max count for scaling bars
+        const maxCount = Math.max(...frequencyData.map((item) => item.count));
+
+        frequencyData.forEach((item) => {
+          const row = document.createElement("tr");
+
+          const valueCell = document.createElement("td");
+          valueCell.textContent = item.value;
+          row.appendChild(valueCell);
+
+          const countCell = document.createElement("td");
+          countCell.textContent = item.count;
+          row.appendChild(countCell);
+
+          const percentageCell = document.createElement("td");
+          percentageCell.textContent = `${item.percentage}%`;
+          row.appendChild(percentageCell);
+
+          const distributionCell = document.createElement("td");
+          const barWidth = (item.count / maxCount) * 100;
+
+          const bar = document.createElement("div");
+          bar.className = "frequency-bar";
+          bar.style.width = `${barWidth}%`;
+
+          distributionCell.appendChild(bar);
+          row.appendChild(distributionCell);
+
+          frequencyTableBody.appendChild(row);
+        });
+
+        // Show frequency container
+        document.getElementById("frequencyContainer").style.display = "block";
+
+        // Scroll to frequency container
+        document
+          .getElementById("frequencyContainer")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Clear input
+      function clearInput() {
+        document.getElementById("dataInput").value = "";
+        document.getElementById("dataOutput").value = "";
+        document.getElementById("frequencyContainer").style.display = "none";
+
+        // Reset data arrays
+        originalData = [];
+        processedData = [];
+
+        // Update stats
+        updateStats();
+
+        // Remove saved input
+        localStorage.removeItem("dataSortingInput");
+      }
+
+      // Load sample data
+      function loadSampleData() {
+        const sampleData =
+          "apple\nbanana\ncherry\napple\nbanana\norange\ngrape\napple\npear\nkiwi\nmelon\ngrape";
+        document.getElementById("dataInput").value = sampleData;
+        document.getElementById("inputFormat").value = "newline";
+      }
+
+      // Show toast message
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast";
+
+        if (type === "error") {
+          toast.classList.add("error");
+        }
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

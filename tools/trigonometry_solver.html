@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trigonometry Solver | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 30px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .tab {
+        padding: 12px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+      }
+
+      .tab.active {
+        border-bottom: 2px solid var(--primary);
+        color: var(--primary);
+        font-weight: 500;
+      }
+
+      .tab:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .solver-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .angle-unit-selector {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .angle-unit-btn {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .angle-unit-btn:first-child {
+        border-radius: 8px 0 0 8px;
+      }
+
+      .angle-unit-btn:last-child {
+        border-radius: 0 8px 8px 0;
+      }
+
+      .angle-unit-btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .triangle-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+      }
+
+      .triangle-diagram {
+        flex: 1;
+        min-width: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .triangle-canvas {
+        background: var(--bg-dark);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+
+      .input-section {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .input-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+
+      .input-description {
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .input-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .input-group label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .input-group input {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      .input-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .solve-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 1rem;
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .solve-btn:hover {
+        background: var(--primary-hover);
+        transform: scale(1.02);
+      }
+
+      .clear-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .clear-btn:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .results-container {
+        margin-top: 30px;
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+        display: none;
+      }
+
+      .results-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+      }
+
+      .result-item {
+        background: var(--bg-dark);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+      }
+
+      .result-value {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .steps-container {
+        margin-top: 20px;
+      }
+
+      .steps-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .steps-list {
+        background: var(--bg-dark);
+        border-radius: 8px;
+        padding: 15px;
+        line-height: 1.6;
+      }
+
+      .steps-list p {
+        margin-bottom: 8px;
+      }
+
+      .error-message {
+        background: rgba(248, 81, 73, 0.1);
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: center;
+        display: none;
+      }
+
+      .function-calculator {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .function-input {
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+      }
+
+      .function-input-group {
+        flex: 1;
+      }
+
+      .function-input-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .function-input-group select,
+      .function-input-group input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      .function-input-group select:focus,
+      .function-input-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .function-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .function-btn:hover {
+        background: var(--primary-hover);
+      }
+
+      .function-result {
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        display: none;
+      }
+
+      .function-result-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .function-result-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-light);
+        margin-bottom: 10px;
+      }
+
+      .function-result-explanation {
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      .graph-container {
+        margin-top: 30px;
+      }
+
+      .graph-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .graph-canvas-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .graph-canvas {
+        background: var(--bg-dark);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+
+      .graph-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .graph-control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .graph-control-group label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .graph-control-group select {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      .graph-control-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .graph-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+
+      .graph-btn:hover {
+        background: var(--primary-hover);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .triangle-container {
+          flex-direction: column;
+        }
+
+        .triangle-diagram {
+          order: -1;
+        }
+
+        .input-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .function-input {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .tabs {
+          padding-bottom: 5px;
+        }
+
+        .tab {
+          padding: 8px 15px;
+          font-size: 0.9rem;
+        }
+
+        .input-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .angle-unit-btn {
+          padding: 8px 15px;
+          font-size: 0.9rem;
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home</a
+      >
+
+      <h1>Trigonometry Solver</h1>
+      <p class="description"
+        >Solve triangle problems, calculate trigonometric functions, and
+        visualize trig graphs.</p
+      >
+
+      <div class="tabs">
+        <div class="tab active" data-tab="triangle">Triangle Solver</div>
+        <div class="tab" data-tab="functions">Trig Functions</div>
+        <div class="tab" data-tab="graphs">Function Graphs</div>
+        <div class="tab" data-tab="pythagorean">Pythagorean Theorem</div>
+      </div>
+
+      <div class="angle-unit-selector">
+        <button class="angle-unit-btn active" data-unit="degrees"
+          >Degrees (°)</button
+        >
+        <button class="angle-unit-btn" data-unit="radians"
+          >Radians (rad)</button
+        >
+      </div>
+
+      <div class="tab-content active" id="triangleTab">
+        <div class="solver-container">
+          <div class="triangle-container">
+            <div class="triangle-diagram">
+              <canvas
+                id="triangleCanvas"
+                class="triangle-canvas"
+                width="300"
+                height="300"></canvas>
+            </div>
+
+            <div class="input-section">
+              <h3 class="input-title">Triangle Solver</h3>
+              <p class="input-description"
+                >Enter any three values to solve the triangle. For a right
+                triangle, angle C is fixed at 90°.</p
+              >
+
+              <div class="input-grid">
+                <div class="input-group">
+                  <label for="sideA">Side a</label>
+                  <input type="number" id="sideA" placeholder="Side a" />
+                </div>
+
+                <div class="input-group">
+                  <label for="sideB">Side b</label>
+                  <input type="number" id="sideB" placeholder="Side b" />
+                </div>
+
+                <div class="input-group">
+                  <label for="sideC">Side c</label>
+                  <input type="number" id="sideC" placeholder="Side c" />
+                </div>
+
+                <div class="input-group">
+                  <label for="angleA">Angle A</label>
+                  <input type="number" id="angleA" placeholder="Angle A" />
+                </div>
+
+                <div class="input-group">
+                  <label for="angleB">Angle B</label>
+                  <input type="number" id="angleB" placeholder="Angle B" />
+                </div>
+
+                <div class="input-group">
+                  <label for="angleC">Angle C</label>
+                  <input type="number" id="angleC" placeholder="Angle C" />
+                </div>
+              </div>
+
+              <div class="checkbox-group">
+                <input type="checkbox" id="rightTriangle" />
+                <label for="rightTriangle"
+                  >Right Triangle (Angle C = 90°)</label
+                >
+              </div>
+
+              <button class="solve-btn" onclick="solveTriangle()"
+                >Solve Triangle</button
+              >
+              <button class="clear-btn" onclick="clearTriangleInputs()"
+                >Clear Inputs</button
+              >
+            </div>
+          </div>
+
+          <div class="results-container" id="triangleResults">
+            <h3 class="results-title">Triangle Solution</h3>
+
+            <div class="results-grid">
+              <div class="result-item">
+                <div class="result-label">Side a</div>
+                <div class="result-value" id="resultSideA">0</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Side b</div>
+                <div class="result-value" id="resultSideB">0</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Side c</div>
+                <div class="result-value" id="resultSideC">0</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Angle A</div>
+                <div class="result-value" id="resultAngleA">0°</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Angle B</div>
+                <div class="result-value" id="resultAngleB">0°</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Angle C</div>
+                <div class="result-value" id="resultAngleC">0°</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Area</div>
+                <div class="result-value" id="resultArea">0</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Perimeter</div>
+                <div class="result-value" id="resultPerimeter">0</div>
+              </div>
+            </div>
+
+            <div class="steps-container">
+              <h4 class="steps-title">Solution Steps</h4>
+              <div class="steps-list" id="solutionSteps">
+                <!-- Steps will be populated here -->
+              </div>
+            </div>
+          </div>
+
+          <div class="error-message" id="triangleError">
+            <!-- Error message will be displayed here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="functionsTab">
+        <div class="function-calculator">
+          <h3 class="input-title">Trigonometric Function Calculator</h3>
+          <p class="input-description"
+            >Calculate the value of trigonometric functions for any angle.</p
+          >
+
+          <div class="function-input">
+            <div class="function-input-group">
+              <label for="functionSelect">Function</label>
+              <select id="functionSelect">
+                <option value="sin">Sine (sin)</option>
+                <option value="cos">Cosine (cos)</option>
+                <option value="tan">Tangent (tan)</option>
+                <option value="csc">Cosecant (csc)</option>
+                <option value="sec">Secant (sec)</option>
+                <option value="cot">Cotangent (cot)</option>
+                <option value="arcsin">Arcsine (arcsin)</option>
+                <option value="arccos">Arccosine (arccos)</option>
+                <option value="arctan">Arctangent (arctan)</option>
+              </select>
+            </div>
+
+            <div class="function-input-group">
+              <label for="angleInput">Angle</label>
+              <input type="number" id="angleInput" placeholder="Enter angle" />
+            </div>
+
+            <button class="function-btn" onclick="calculateFunction()"
+              >Calculate</button
+            >
+          </div>
+
+          <div class="function-result" id="functionResult">
+            <h3 class="function-result-title">Result</h3>
+            <div class="function-result-value" id="functionValue">0</div>
+            <div class="function-result-explanation" id="functionExplanation">
+              <!-- Explanation will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="graphsTab">
+        <div class="graph-container">
+          <h3 class="graph-title">Trigonometric Function Graphs</h3>
+
+          <div class="graph-canvas-container">
+            <canvas
+              id="graphCanvas"
+              class="graph-canvas"
+              width="600"
+              height="400"></canvas>
+          </div>
+
+          <div class="graph-controls">
+            <div class="graph-control-group">
+              <label for="graphFunction">Function</label>
+              <select id="graphFunction">
+                <option value="sin">Sine (sin)</option>
+                <option value="cos">Cosine (cos)</option>
+                <option value="tan">Tangent (tan)</option>
+              </select>
+            </div>
+
+            <div class="graph-control-group">
+              <label for="graphAmplitude">Amplitude</label>
+              <select id="graphAmplitude">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="0.5">0.5</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+
+            <div class="graph-control-group">
+              <label for="graphPeriod">Period</label>
+              <select id="graphPeriod">
+                <option value="1">Default (2π)</option>
+                <option value="2">2× (4π)</option>
+                <option value="0.5">0.5× (π)</option>
+                <option value="3">3× (6π)</option>
+              </select>
+            </div>
+
+            <button class="graph-btn" onclick="drawGraph()">Draw Graph</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="pythagoreanTab">
+        <div class="solver-container">
+          <h3 class="input-title">Pythagorean Theorem Calculator</h3>
+          <p class="input-description"
+            >Calculate the missing side of a right triangle using the
+            Pythagorean theorem: a² + b² = c²</p
+          >
+
+          <div class="triangle-container">
+            <div class="triangle-diagram">
+              <canvas
+                id="pythagoreanCanvas"
+                class="triangle-canvas"
+                width="300"
+                height="300"></canvas>
+            </div>
+
+            <div class="input-section">
+              <div class="input-grid">
+                <div class="input-group">
+                  <label for="pythagSideA">Side a</label>
+                  <input type="number" id="pythagSideA" placeholder="Side a" />
+                </div>
+
+                <div class="input-group">
+                  <label for="pythagSideB">Side b</label>
+                  <input type="number" id="pythagSideB" placeholder="Side b" />
+                </div>
+
+                <div class="input-group">
+                  <label for="pythagSideC">Hypotenuse c</label>
+                  <input
+                    type="number"
+                    id="pythagSideC"
+                    placeholder="Hypotenuse c" />
+                </div>
+              </div>
+
+              <p class="input-description"
+                >Enter any two values to calculate the third.</p
+              >
+
+              <button class="solve-btn" onclick="solvePythagorean()"
+                >Calculate</button
+              >
+              <button class="clear-btn" onclick="clearPythagoreanInputs()"
+                >Clear Inputs</button
+              >
+            </div>
+          </div>
+
+          <div class="results-container" id="pythagoreanResults">
+            <h3 class="results-title">Pythagorean Theorem Solution</h3>
+
+            <div class="results-grid">
+              <div class="result-item">
+                <div class="result-label">Side a</div>
+                <div class="result-value" id="pythagResultA">0</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Side b</div>
+                <div class="result-value" id="pythagResultB">0</div>
+              </div>
+
+              <div class="result-item">
+                <div class="result-label">Hypotenuse c</div>
+                <div class="result-value" id="pythagResultC">0</div>
+              </div>
+            </div>
+
+            <div class="steps-container">
+              <h4 class="steps-title">Solution Steps</h4>
+              <div class="steps-list" id="pythagSteps">
+                <!-- Steps will be populated here -->
+              </div>
+            </div>
+          </div>
+
+          <div class="error-message" id="pythagoreanError">
+            <!-- Error message will be displayed here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <script>
+      // Global variables
+      let angleUnit = "degrees"; // 'degrees' or 'radians'
+
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set up tab switching
+        const tabs = document.querySelectorAll(".tab");
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const tabId = this.getAttribute("data-tab");
+            switchTab(tabId);
+          });
+        });
+
+        // Set up angle unit buttons
+        const angleUnitBtns = document.querySelectorAll(".angle-unit-btn");
+        angleUnitBtns.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            angleUnitBtns.forEach((b) => b.classList.remove("active"));
+            this.classList.add("active");
+            angleUnit = this.getAttribute("data-unit");
+
+            // Update any displayed angles
+            updateAngleDisplays();
+          });
+        });
+
+        // Set up right triangle checkbox
+        document
+          .getElementById("rightTriangle")
+          .addEventListener("change", function () {
+            if (this.checked) {
+              document.getElementById("angleC").value =
+                angleUnit === "degrees" ? "90" : (Math.PI / 2).toFixed(4);
+              document.getElementById("angleC").disabled = true;
+            } else {
+              document.getElementById("angleC").disabled = false;
+            }
+
+            // Redraw triangle
+            drawTriangle();
+          });
+
+        // Initialize canvases
+        drawTriangle();
+        drawPythagoreanTriangle();
+        drawGraph();
+
+        // Set up input event listeners for triangle
+        const triangleInputs = document.querySelectorAll(
+          '#triangleTab input[type="number"]'
+        );
+        triangleInputs.forEach((input) => {
+          input.addEventListener("input", drawTriangle);
+        });
+
+        // Set up input event listeners for pythagorean
+        const pythagInputs = document.querySelectorAll(
+          '#pythagoreanTab input[type="number"]'
+        );
+        pythagInputs.forEach((input) => {
+          input.addEventListener("input", drawPythagoreanTriangle);
+        });
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+
+        // Redraw canvases with new theme
+        drawTriangle();
+        drawPythagoreanTriangle();
+        drawGraph();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Switch between tabs
+      function switchTab(tabId) {
+        // Hide all tab contents
+        const tabContents = document.querySelectorAll(".tab-content");
+        tabContents.forEach((content) => {
+          content.classList.remove("active");
+        });
+
+        // Deactivate all tabs
+        const tabs = document.querySelectorAll(".tab");
+        tabs.forEach((tab) => {
+          tab.classList.remove("active");
+        });
+
+        // Activate selected tab and content
+        document.getElementById(`${tabId}Tab`).classList.add("active");
+        document
+          .querySelector(`.tab[data-tab="${tabId}"]`)
+          .classList.add("active");
+
+        // Redraw canvases when switching tabs
+        if (tabId === "triangle") {
+          drawTriangle();
+        } else if (tabId === "pythagorean") {
+          drawPythagoreanTriangle();
+        } else if (tabId === "graphs") {
+          drawGraph();
+        }
+      }
+
+      // Update angle displays based on current unit
+      function updateAngleDisplays() {
+        // Update triangle results if visible
+        if (
+          document.getElementById("triangleResults").style.display === "block"
+        ) {
+          solveTriangle();
+        }
+
+        // Update function result if visible
+        if (
+          document.getElementById("functionResult").style.display === "block"
+        ) {
+          calculateFunction();
+        }
+
+        // Redraw graph if visible
+        if (document.getElementById("graphsTab").classList.contains("active")) {
+          drawGraph();
+        }
+      }
+
+      // Convert between degrees and radians
+      function toRadians(degrees) {
+        return degrees * (Math.PI / 180);
+      }
+
+      function toDegrees(radians) {
+        return radians * (180 / Math.PI);
+      }
+
+      // Format angle based on current unit
+      function formatAngle(angle) {
+        if (angleUnit === "degrees") {
+          return angle.toFixed(2) + "°";
+        } else {
+          return angle.toFixed(4) + " rad";
+        }
+      }
+
+      // Parse angle input based on current unit
+      function parseAngle(angle) {
+        if (angleUnit === "degrees") {
+          return parseFloat(angle);
+        } else {
+          return parseFloat(angle);
+        }
+      }
+
+      // Draw triangle on canvas
+      function drawTriangle() {
+        const canvas = document.getElementById("triangleCanvas");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Set colors based on theme
+        const isLight = document.body.classList.contains("light-theme");
+        const lineColor = isLight ? "#0066cc" : "#58a6ff";
+        const textColor = isLight ? "#24292e" : "#c9d1d9";
+        const bgColor = isLight ? "#f5f8fa" : "#0d1117";
+
+        // Get input values
+        const sideA = parseFloat(document.getElementById("sideA").value) || 0;
+        const sideB = parseFloat(document.getElementById("sideB").value) || 0;
+        const sideC = parseFloat(document.getElementById("sideC").value) || 0;
+        let angleA = parseAngle(document.getElementById("angleA").value) || 0;
+        let angleB = parseAngle(document.getElementById("angleB").value) || 0;
+        let angleC = parseAngle(document.getElementById("angleC").value) || 0;
+
+        // Convert angles to radians for drawing
+        if (angleUnit === "degrees") {
+          angleA = toRadians(angleA);
+          angleB = toRadians(angleB);
+          angleC = toRadians(angleC);
+        }
+
+        // Draw a sample triangle if no inputs
+        if (
+          sideA === 0 &&
+          sideB === 0 &&
+          sideC === 0 &&
+          angleA === 0 &&
+          angleB === 0 &&
+          angleC === 0
+        ) {
+          // Draw a sample triangle
+          const margin = 50;
+          const x1 = margin;
+          const y1 = height - margin;
+          const x2 = width - margin;
+          const y2 = height - margin;
+          const x3 = width / 2;
+          const y3 = margin;
+
+          // Draw triangle
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.lineTo(x3, y3);
+          ctx.closePath();
+          ctx.strokeStyle = lineColor;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Label vertices
+          ctx.font = "16px Poppins";
+          ctx.fillStyle = textColor;
+          ctx.fillText("A", x1 - 20, y1);
+          ctx.fillText("B", x2 + 20, y2);
+          ctx.fillText("C", x3, y3 - 15);
+
+          // Label sides
+          ctx.fillText("c", (x1 + x2) / 2, y1 + 20);
+          ctx.fillText("a", (x2 + x3) / 2 + 10, (y2 + y3) / 2);
+          ctx.fillText("b", (x1 + x3) / 2 - 10, (y1 + y3) / 2);
+
+          return;
+        }
+
+        // TODO: Draw actual triangle based on inputs
+        // This would require solving the triangle first
+        // For now, just draw a sample triangle
+
+        const margin = 50;
+        const x1 = margin;
+        const y1 = height - margin;
+        const x2 = width - margin;
+        const y2 = height - margin;
+        const x3 = width / 2;
+        const y3 = margin;
+
+        // Draw triangle
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x3, y3);
+        ctx.closePath();
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Label vertices
+        ctx.font = "16px Poppins";
+        ctx.fillStyle = textColor;
+        ctx.fillText("A", x1 - 20, y1);
+        ctx.fillText("B", x2 + 20, y2);
+        ctx.fillText("C", x3, y3 - 15);
+
+        // Label sides
+        ctx.fillText("c", (x1 + x2) / 2, y1 + 20);
+        ctx.fillText("a", (x2 + x3) / 2 + 10, (y2 + y3) / 2);
+        ctx.fillText("b", (x1 + x3) / 2 - 10, (y1 + y3) / 2);
+      }
+
+      // Draw pythagorean triangle on canvas
+      function drawPythagoreanTriangle() {
+        const canvas = document.getElementById("pythagoreanCanvas");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Set colors based on theme
+        const isLight = document.body.classList.contains("light-theme");
+        const lineColor = isLight ? "#0066cc" : "#58a6ff";
+        const textColor = isLight ? "#24292e" : "#c9d1d9";
+        const bgColor = isLight ? "#f5f8fa" : "#0d1117";
+
+        // Get input values
+        const sideA =
+          parseFloat(document.getElementById("pythagSideA").value) || 0;
+        const sideB =
+          parseFloat(document.getElementById("pythagSideB").value) || 0;
+        const sideC =
+          parseFloat(document.getElementById("pythagSideC").value) || 0;
+
+        // Draw a right triangle
+        const margin = 50;
+        const x1 = margin;
+        const y1 = height - margin;
+        const x2 = width - margin;
+        const y2 = height - margin;
+        const x3 = x1;
+        const y3 = margin;
+
+        // Draw triangle
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x3, y3);
+        ctx.closePath();
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw right angle symbol
+        ctx.beginPath();
+        ctx.moveTo(x1 + 20, y1);
+        ctx.lineTo(x1 + 20, y1 - 20);
+        ctx.lineTo(x1, y1 - 20);
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Label vertices
+        ctx.font = "16px Poppins";
+        ctx.fillStyle = textColor;
+        ctx.fillText("A", x1 - 20, y1);
+        ctx.fillText("B", x2 + 20, y2);
+        ctx.fillText("C", x3 - 20, y3 - 10);
+
+        // Label sides
+        ctx.fillText("c (hypotenuse)", (x1 + x3) / 2 - 50, (y1 + y3) / 2);
+        ctx.fillText("a", (x1 + x2) / 2, y1 + 20);
+        ctx.fillText("b", x1 - 20, (y1 + y3) / 2);
+      }
+
+      // Draw trigonometric function graph
+      function drawGraph() {
+        const canvas = document.getElementById("graphCanvas");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Set colors based on theme
+        const isLight = document.body.classList.contains("light-theme");
+        const lineColor = isLight ? "#0066cc" : "#58a6ff";
+        const gridColor = isLight ? "#e1e4e8" : "#30363d";
+        const textColor = isLight ? "#24292e" : "#c9d1d9";
+        const bgColor = isLight ? "#f5f8fa" : "#0d1117";
+
+        // Get graph parameters
+        const functionType = document.getElementById("graphFunction").value;
+        const amplitude = parseFloat(
+          document.getElementById("graphAmplitude").value
+        );
+        const period = parseFloat(document.getElementById("graphPeriod").value);
+
+        // Set up coordinate system
+        const xAxis = height / 2;
+        const yAxis = width / 2;
+        const xScale = 50; // pixels per unit
+        const yScale = 50; // pixels per unit
+
+        // Draw grid
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 0.5;
+
+        // Vertical grid lines
+        for (let x = 0; x <= width; x += xScale) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+
+        // Horizontal grid lines
+        for (let y = 0; y <= height; y += yScale) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+
+        // Draw axes
+        ctx.strokeStyle = textColor;
+        ctx.lineWidth = 2;
+
+        // x-axis
+        ctx.beginPath();
+        ctx.moveTo(0, xAxis);
+        ctx.lineTo(width, xAxis);
+        ctx.stroke();
+
+        // y-axis
+        ctx.beginPath();
+        ctx.moveTo(yAxis, 0);
+        ctx.lineTo(yAxis, height);
+        ctx.stroke();
+
+        // Label axes
+        ctx.font = "14px Poppins";
+        ctx.fillStyle = textColor;
+
+        // x-axis labels
+        for (let x = xScale; x <= width / 2; x += xScale) {
+          // Positive x
+          ctx.fillText(x / xScale + "π", yAxis + x - 10, xAxis + 20);
+          // Negative x
+          ctx.fillText("-" + x / xScale + "π", yAxis - x - 15, xAxis + 20);
+        }
+
+        // y-axis labels
+        for (let y = yScale; y <= height / 2; y += yScale) {
+          // Positive y
+          ctx.fillText(y / yScale, yAxis + 5, xAxis - y);
+          // Negative y
+          ctx.fillText("-" + y / yScale, yAxis + 5, xAxis + y);
+        }
+
+        // Draw function
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        // Calculate points
+        const step = 1; // pixels
+        for (let x = 0; x < width; x += step) {
+          const xValue = (x - yAxis) / xScale; // Convert to coordinate system
+          let yValue;
+
+          // Calculate y value based on function type
+          switch (functionType) {
+            case "sin":
+              yValue = amplitude * Math.sin(xValue / period);
+              break;
+            case "cos":
+              yValue = amplitude * Math.cos(xValue / period);
+              break;
+            case "tan":
+              yValue = amplitude * Math.tan(xValue / period);
+              // Limit tan for display purposes
+              yValue = Math.max(-5, Math.min(5, yValue));
+              break;
+            default:
+              yValue = 0;
+          }
+
+          // Convert to canvas coordinates
+          const y = xAxis - yValue * yScale;
+
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+
+        // Add function label
+        ctx.font = "16px Poppins";
+        ctx.fillStyle = lineColor;
+
+        let functionLabel;
+        switch (functionType) {
+          case "sin":
+            functionLabel = `y = ${amplitude} × sin(${
+              period === 1 ? "" : period + " × "
+            }x)`;
+            break;
+          case "cos":
+            functionLabel = `y = ${amplitude} × cos(${
+              period === 1 ? "" : period + " × "
+            }x)`;
+            break;
+          case "tan":
+            functionLabel = `y = ${amplitude} × tan(${
+              period === 1 ? "" : period + " × "
+            }x)`;
+            break;
+        }
+
+        ctx.fillText(functionLabel, 20, 30);
+      }
+
+      // Solve triangle
+      function solveTriangle() {
+        // Hide error message
+        document.getElementById("triangleError").style.display = "none";
+
+        // Get input values
+        let sideA = parseFloat(document.getElementById("sideA").value) || 0;
+        let sideB = parseFloat(document.getElementById("sideB").value) || 0;
+        let sideC = parseFloat(document.getElementById("sideC").value) || 0;
+        let angleA = parseAngle(document.getElementById("angleA").value) || 0;
+        let angleB = parseAngle(document.getElementById("angleB").value) || 0;
+        let angleC = parseAngle(document.getElementById("angleC").value) || 0;
+
+        // Convert angles to radians for calculations
+        if (angleUnit === "degrees") {
+          angleA = toRadians(angleA);
+          angleB = toRadians(angleB);
+          angleC = toRadians(angleC);
+        }
+
+        // Check if we have enough information
+        const inputCount = [sideA, sideB, sideC, angleA, angleB, angleC].filter(
+          (val) => val > 0
+        ).length;
+
+        if (inputCount < 3) {
+          document.getElementById("triangleError").textContent =
+            "Please enter at least three values to solve the triangle.";
+          document.getElementById("triangleError").style.display = "block";
+          return;
+        }
+
+        // Check for right triangle
+        const isRightTriangle =
+          document.getElementById("rightTriangle").checked;
+        if (isRightTriangle) {
+          angleC = Math.PI / 2; // 90 degrees in radians
+        }
+
+        // TODO: Implement triangle solving logic
+        // This would involve the law of sines, law of cosines, etc.
+
+        // For now, just show sample results
+        const area = 0.5 * sideA * sideB * Math.sin(angleC);
+        const perimeter = sideA + sideB + sideC;
+
+        // Convert angles back to degrees for display if needed
+        if (angleUnit === "degrees") {
+          angleA = toDegrees(angleA);
+          angleB = toDegrees(angleB);
+          angleC = toDegrees(angleC);
+        }
+
+        // Update results
+        document.getElementById("resultSideA").textContent = sideA.toFixed(2);
+        document.getElementById("resultSideB").textContent = sideB.toFixed(2);
+        document.getElementById("resultSideC").textContent = sideC.toFixed(2);
+        document.getElementById("resultAngleA").textContent =
+          formatAngle(angleA);
+        document.getElementById("resultAngleB").textContent =
+          formatAngle(angleB);
+        document.getElementById("resultAngleC").textContent =
+          formatAngle(angleC);
+        document.getElementById("resultArea").textContent = area.toFixed(2);
+        document.getElementById("resultPerimeter").textContent =
+          perimeter.toFixed(2);
+
+        // Show solution steps
+        document.getElementById("solutionSteps").innerHTML = `
+    <p>Step 1: Identify the known values.</p>
+    <p>Step 2: Apply the appropriate trigonometric laws to find the missing values.</p>
+    <p>Step 3: Calculate the area using the formula: Area = (1/2) × a × b × sin(C)</p>
+    <p>Step 4: Calculate the perimeter: Perimeter = a + b + c</p>
+  `;
+
+        // Show results
+        document.getElementById("triangleResults").style.display = "block";
+      }
+
+      // Clear triangle inputs
+      function clearTriangleInputs() {
+        document.getElementById("sideA").value = "";
+        document.getElementById("sideB").value = "";
+        document.getElementById("sideC").value = "";
+        document.getElementById("angleA").value = "";
+        document.getElementById("angleB").value = "";
+        document.getElementById("angleC").value = "";
+        document.getElementById("rightTriangle").checked = false;
+        document.getElementById("angleC").disabled = false;
+
+        // Hide results
+        document.getElementById("triangleResults").style.display = "none";
+        document.getElementById("triangleError").style.display = "none";
+
+        // Redraw triangle
+        drawTriangle();
+      }
+
+      // Calculate trigonometric function
+      function calculateFunction() {
+        const functionType = document.getElementById("functionSelect").value;
+        let angle = parseFloat(document.getElementById("angleInput").value);
+
+        if (isNaN(angle)) {
+          document.getElementById("functionResult").style.display = "none";
+          return;
+        }
+
+        // Convert angle to radians for calculation if needed
+        let angleRad = angle;
+        if (angleUnit === "degrees") {
+          angleRad = toRadians(angle);
+        }
+
+        let result;
+        let explanation;
+
+        // Calculate function value
+        switch (functionType) {
+          case "sin":
+            result = Math.sin(angleRad);
+            explanation = `The sine of ${formatAngle(
+              angle
+            )} is the ratio of the opposite side to the hypotenuse in a right triangle.`;
+            break;
+          case "cos":
+            result = Math.cos(angleRad);
+            explanation = `The cosine of ${formatAngle(
+              angle
+            )} is the ratio of the adjacent side to the hypotenuse in a right triangle.`;
+            break;
+          case "tan":
+            result = Math.tan(angleRad);
+            explanation = `The tangent of ${formatAngle(
+              angle
+            )} is the ratio of the opposite side to the adjacent side in a right triangle.`;
+            break;
+          case "csc":
+            result = 1 / Math.sin(angleRad);
+            explanation = `The cosecant of ${formatAngle(
+              angle
+            )} is the reciprocal of sine.`;
+            break;
+          case "sec":
+            result = 1 / Math.cos(angleRad);
+            explanation = `The secant of ${formatAngle(
+              angle
+            )} is the reciprocal of cosine.`;
+            break;
+          case "cot":
+            result = 1 / Math.tan(angleRad);
+            explanation = `The cotangent of ${formatAngle(
+              angle
+            )} is the reciprocal of tangent.`;
+            break;
+          case "arcsin":
+            if (angle < -1 || angle > 1) {
+              document.getElementById("functionResult").style.display = "none";
+              alert("Arcsine input must be between -1 and 1.");
+              return;
+            }
+            result = Math.asin(angle);
+            if (angleUnit === "degrees") {
+              result = toDegrees(result);
+            }
+            explanation = `The arcsine of ${angle} is the angle whose sine equals ${angle}.`;
+            break;
+          case "arccos":
+            if (angle < -1 || angle > 1) {
+              document.getElementById("functionResult").style.display = "none";
+              alert("Arccosine input must be between -1 and 1.");
+              return;
+            }
+            result = Math.acos(angle);
+            if (angleUnit === "degrees") {
+              result = toDegrees(result);
+            }
+            explanation = `The arccosine of ${angle} is the angle whose cosine equals ${angle}.`;
+            break;
+          case "arctan":
+            result = Math.atan(angle);
+            if (angleUnit === "degrees") {
+              result = toDegrees(result);
+            }
+            explanation = `The arctangent of ${angle} is the angle whose tangent equals ${angle}.`;
+            break;
+        }
+
+        // Update result
+        document.getElementById("functionValue").textContent =
+          result.toFixed(6);
+        document.getElementById("functionExplanation").textContent =
+          explanation;
+
+        // Show result
+        document.getElementById("functionResult").style.display = "block";
+      }
+
+      // Solve pythagorean theorem
+      function solvePythagorean() {
+        // Hide error message
+        document.getElementById("pythagoreanError").style.display = "none";
+
+        // Get input values
+        let sideA =
+          parseFloat(document.getElementById("pythagSideA").value) || 0;
+        let sideB =
+          parseFloat(document.getElementById("pythagSideB").value) || 0;
+        let sideC =
+          parseFloat(document.getElementById("pythagSideC").value) || 0;
+
+        // Count how many values are provided
+        const inputCount = [sideA, sideB, sideC].filter(
+          (val) => val > 0
+        ).length;
+
+        if (inputCount !== 2) {
+          document.getElementById("pythagoreanError").textContent =
+            "Please enter exactly two values to calculate the third.";
+          document.getElementById("pythagoreanError").style.display = "block";
+          return;
+        }
+
+        let steps = "";
+
+        // Calculate the missing side
+        if (sideA === 0) {
+          // Calculate side a
+          steps = `
+      <p>Step 1: Use the Pythagorean theorem: a² + b² = c²</p>
+      <p>Step 2: Solve for a: a² = c² - b²</p>
+      <p>Step 3: a = √(c² - b²)</p>
+      <p>Step 4: a = √(${sideC.toFixed(2)}² - ${sideB.toFixed(2)}²)</p>
+      <p>Step 5: a = √(${(sideC * sideC).toFixed(2)} - ${(
+            sideB * sideB
+          ).toFixed(2)})</p>
+      <p>Step 6: a = √(${(sideC * sideC - sideB * sideB).toFixed(2)})</p>
+      <p>Step 7: a = ${Math.sqrt(sideC * sideC - sideB * sideB).toFixed(2)}</p>
+    `;
+          sideA = Math.sqrt(sideC * sideC - sideB * sideB);
+        } else if (sideB === 0) {
+          // Calculate side b
+          steps = `
+      <p>Step 1: Use the Pythagorean theorem: a² + b² = c²</p>
+      <p>Step 2: Solve for b: b² = c² - a²</p>
+      <p>Step 3: b = √(c² - a²)</p>
+      <p>Step 4: b = √(${sideC.toFixed(2)}² - ${sideA.toFixed(2)}²)</p>
+      <p>Step 5: b = √(${(sideC * sideC).toFixed(2)} - ${(
+            sideA * sideA
+          ).toFixed(2)})</p>
+      <p>Step 6: b = √(${(sideC * sideC - sideA * sideA).toFixed(2)})</p>
+      <p>Step 7: b = ${Math.sqrt(sideC * sideC - sideA * sideA).toFixed(2)}</p>
+    `;
+          sideB = Math.sqrt(sideC * sideC - sideA * sideA);
+        } else {
+          // Calculate side c (hypotenuse)
+          steps = `
+      <p>Step 1: Use the Pythagorean theorem: a² + b² = c²</p>
+      <p>Step 2: Solve for c: c = √(a² + b²)</p>
+      <p>Step 3: c = √(${sideA.toFixed(2)}² + ${sideB.toFixed(2)}²)</p>
+      <p>Step 4: c = √(${(sideA * sideA).toFixed(2)} + ${(
+            sideB * sideB
+          ).toFixed(2)})</p>
+      <p>Step 5: c = √(${(sideA * sideA + sideB * sideB).toFixed(2)})</p>
+      <p>Step 6: c = ${Math.sqrt(sideA * sideA + sideB * sideB).toFixed(2)}</p>
+    `;
+          sideC = Math.sqrt(sideA * sideA + sideB * sideB);
+        }
+
+        // Check if the triangle is valid
+        if (
+          sideA + sideB <= sideC ||
+          isNaN(sideA) ||
+          isNaN(sideB) ||
+          isNaN(sideC)
+        ) {
+          document.getElementById("pythagoreanError").textContent =
+            "Invalid triangle. The sum of two sides must be greater than the third side.";
+          document.getElementById("pythagoreanError").style.display = "block";
+          return;
+        }
+
+        // Update results
+        document.getElementById("pythagResultA").textContent = sideA.toFixed(2);
+        document.getElementById("pythagResultB").textContent = sideB.toFixed(2);
+        document.getElementById("pythagResultC").textContent = sideC.toFixed(2);
+
+        // Show solution steps
+        document.getElementById("pythagSteps").innerHTML = steps;
+
+        // Show results
+        document.getElementById("pythagoreanResults").style.display = "block";
+
+        // Update inputs with calculated values
+        document.getElementById("pythagSideA").value = sideA.toFixed(2);
+        document.getElementById("pythagSideB").value = sideB.toFixed(2);
+        document.getElementById("pythagSideC").value = sideC.toFixed(2);
+
+        // Redraw triangle
+        drawPythagoreanTriangle();
+      }
+
+      // Clear pythagorean inputs
+      function clearPythagoreanInputs() {
+        document.getElementById("pythagSideA").value = "";
+        document.getElementById("pythagSideB").value = "";
+        document.getElementById("pythagSideC").value = "";
+
+        // Hide results
+        document.getElementById("pythagoreanResults").style.display = "none";
+        document.getElementById("pythagoreanError").style.display = "none";
+
+        // Redraw triangle
+        drawPythagoreanTriangle();
+      }
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

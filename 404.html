@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+        display: flex (0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .error-code {
+        font-size: 8rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+        max-width: 600px;
+      }
+
+      .home-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--primary);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .home-btn:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Hamburger Menu and Toast Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 80px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+          margin: 20px auto;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .error-code {
+          font-size: 6rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 15px auto;
+        }
+
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+          margin-top: 20px;
+        }
+
+        .error-code {
+          font-size: 5rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="tools/gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="tools/typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="tools/metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <div class="error-code">404</div>
+      <h1>Page Not Found</h1>
+      <p class="description">
+        Oops! The page you're looking for doesn't exist or has been moved.
+      </p>
+      <a href="index.html" class="home-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="currentColor"
+          fill="none">
+          <path
+            d="M15.0002 17C14.2007 17.6224 13.1504 18 12.0002 18C10.8499 18 9.79971 17.6224 9.00018 17"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round" />
+          <path
+            d="M2.35157 13.2135C1.99855 10.9162 1.82204 9.76763 2.25635 8.74938C2.69065 7.73112 3.65421 7.03443 5.58132 5.64106L7.02117 4.6C9.41847 2.86667 10.6171 2 12.0002 2C13.3832 2 14.5819 2.86667 16.9792 4.6L18.419 5.64106C20.3462 7.03443 21.3097 7.73112 21.744 8.74938C22.1783 9.76763 22.0018 10.9162 21.6488 13.2135L21.3478 15.1724C20.8473 18.4289 20.5971 20.0572 19.4292 21.0286C18.2613 22 16.5538 22 13.139 22H10.8614C7.44652 22 5.73909 22 4.57118 21.0286C3.40327 20.0572 3.15305 18.4289 2.65261 15.1724L2.35157 13.2135Z"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home
+      </a>
+    </div>
+
+    <footer>
+      <p
+        >Designed and developed by
+        <a
+          href="https://www.facebook.com/61560816188544"
+          class="social-link"
+          target="_blank"
+          >@driyqnn</a
+        >
+        | &copy; 2025 School Tools Hub</p
+      >
+      <div class="social-links">
+        <a
+          href="https://www.facebook.com/61560816188544"
+          class="social-link"
+          target="_blank"
+          >Facebook</a
+        >
+      </div>
+    </footer>
+
+    <script>
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

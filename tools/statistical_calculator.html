@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statistical Calculator | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .calculator-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .input-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .input-label {
+        font-size: 1rem;
+        color: var(--text-light);
+      }
+
+      .input-help {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 5px;
+      }
+
+      .data-input {
+        width: 100%;
+        min-height: 100px;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      .data-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .action-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-btn:hover {
+        background: var(--primary-hover);
+        transform: scale(1.02);
+      }
+
+      .action-btn.secondary {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+      }
+
+      .action-btn.secondary:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .results-section {
+        margin-top: 30px;
+        display: none;
+      }
+
+      .results-title {
+        font-size: 1.3rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+      }
+
+      .result-card {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .result-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .result-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .result-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .advanced-results {
+        margin-top: 30px;
+      }
+
+      .advanced-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+
+      .quartiles-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .quartile-card {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        text-align: center;
+      }
+
+      .quartile-value {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .quartile-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .regression-container {
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      .regression-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .regression-equation {
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 15px;
+        font-weight: 500;
+      }
+
+      .regression-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+      }
+
+      .regression-stat {
+        background: var(--bg-dark);
+        border-radius: 6px;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .regression-stat-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .regression-stat-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .histogram-container {
+        margin-top: 30px;
+      }
+
+      .histogram-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .histogram {
+        height: 200px;
+        display: flex;
+        align-items: flex-end;
+        gap: 5px;
+        padding: 10px;
+        background: var(--bg-dark);
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .histogram-bar {
+        flex: 1;
+        background: var(--primary);
+        border-radius: 4px 4px 0 0;
+        transition: height 0.5s ease;
+        position: relative;
+        min-width: 20px;
+      }
+
+      .histogram-bar:hover::after {
+        content: attr(data-count);
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-card);
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .histogram-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .outliers-container {
+        margin-top: 30px;
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .outliers-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .outliers-list {
+        background: var(--bg-dark);
+        border-radius: 8px;
+        padding: 15px;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+
+      .outlier-item {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .outlier-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+
+      .outlier-value {
+        font-weight: 500;
+      }
+
+      .outlier-info {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .no-outliers {
+        text-align: center;
+        color: var(--success);
+        padding: 10px;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--danger);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .quartiles-container {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .regression-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .result-value {
+          font-size: 1.3rem;
+        }
+      }
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability-checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn">← Back to Home</a>
+
+      <h1>Statistical Calculator</h1>
+      <p class="description"
+        >Calculate mean, median, mode, standard deviation, and more from your
+        data set.</p
+      >
+
+      <div class="calculator-container">
+        <div class="input-section">
+          <label class="input-label" for="dataInput">Enter your data:</label>
+          <textarea
+            class="data-input"
+            id="dataInput"
+            placeholder="Enter numbers separated by commas, spaces, or new lines. Example: 5, 10, 15, 20, 25"></textarea>
+          <p class="input-help"
+            >For regression analysis, enter pairs of x,y values on each line.
+            Example: 1,2 (new line) 3,4 (new line) 5,6</p
+          >
+
+          <div class="action-buttons">
+            <button class="action-btn" id="calculateBtn">
+              <span>📊</span> Calculate Statistics
+            </button>
+
+            <button class="action-btn secondary" id="clearBtn">
+              <span>🗑️</span> Clear Data
+            </button>
+
+            <button class="action-btn secondary" id="sampleDataBtn">
+              <span>📋</span> Use Sample Data
+            </button>
+          </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+          <h2 class="results-title">Statistical Results</h2>
+
+          <div class="results-grid">
+            <div class="result-card">
+              <div class="result-value" id="meanValue">0</div>
+              <div class="result-label">Mean</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-value" id="medianValue">0</div>
+              <div class="result-label">Median</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-value" id="modeValue">0</div>
+              <div class="result-label">Mode</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-value" id="rangeValue">0</div>
+              <div class="result-label">Range</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-value" id="stdDevValue">0</div>
+              <div class="result-label">Standard Deviation</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-value" id="varianceValue">0</div>
+              <div class="result-label">Variance</div>
+            </div>
+          </div>
+
+          <div class="advanced-results">
+            <h3 class="advanced-title">Quartiles & Percentiles</h3>
+
+            <div class="quartiles-container">
+              <div class="quartile-card">
+                <div class="quartile-value" id="minValue">0</div>
+                <div class="quartile-label">Minimum</div>
+              </div>
+
+              <div class="quartile-card">
+                <div class="quartile-value" id="q1Value">0</div>
+                <div class="quartile-label">Q1 (25%)</div>
+              </div>
+
+              <div class="quartile-card">
+                <div class="quartile-value" id="q2Value">0</div>
+                <div class="quartile-label">Q2 (50%)</div>
+              </div>
+
+              <div class="quartile-card">
+                <div class="quartile-value" id="q3Value">0</div>
+                <div class="quartile-label">Q3 (75%)</div>
+              </div>
+
+              <div class="quartile-card">
+                <div class="quartile-value" id="maxValue">0</div>
+                <div class="quartile-label">Maximum</div>
+              </div>
+            </div>
+
+            <div class="regression-container" id="regressionContainer">
+              <h3 class="regression-title">Linear Regression Analysis</h3>
+
+              <div class="regression-equation" id="regressionEquation"
+                >y = 0x + 0</div
+              >
+
+              <div class="regression-stats">
+                <div class="regression-stat">
+                  <div class="regression-stat-value" id="rSquaredValue">0</div>
+                  <div class="regression-stat-label">R-squared</div>
+                </div>
+
+                <div class="regression-stat">
+                  <div class="regression-stat-value" id="correlationValue"
+                    >0</div
+                  >
+                  <div class="regression-stat-label">Correlation</div>
+                </div>
+
+                <div class="regression-stat">
+                  <div class="regression-stat-value" id="slopeValue">0</div>
+                  <div class="regression-stat-label">Slope</div>
+                </div>
+
+                <div class="regression-stat">
+                  <div class="regression-stat-value" id="interceptValue">0</div>
+                  <div class="regression-stat-label">Y-Intercept</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="histogram-container">
+              <h3 class="histogram-title">Data Distribution Histogram</h3>
+
+              <div class="histogram" id="histogram"></div>
+              <div class="histogram-labels" id="histogramLabels"></div>
+            </div>
+
+            <div class="outliers-container">
+              <h3 class="outliers-title">Outlier Detection</h3>
+
+              <div class="outliers-list" id="outliersList">
+                <p class="no-outliers">No outliers detected in the data set.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <script>
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Get DOM elements
+      const dataInput = document.getElementById("dataInput");
+      const calculateBtn = document.getElementById("calculateBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const sampleDataBtn = document.getElementById("sampleDataBtn");
+      const resultsSection = document.getElementById("resultsSection");
+      const regressionContainer = document.getElementById(
+        "regressionContainer"
+      );
+
+      // Add event listeners
+      calculateBtn.addEventListener("click", calculateStatistics);
+      clearBtn.addEventListener("click", clearData);
+      sampleDataBtn.addEventListener("click", useSampleData);
+
+      // Load saved data if available
+      document.addEventListener("DOMContentLoaded", function () {
+        const savedData = localStorage.getItem("statisticalData");
+        if (savedData) {
+          dataInput.value = savedData;
+        }
+      });
+
+      // Use sample data
+      function useSampleData() {
+        const sampleData =
+          "42, 37, 51, 45, 39, 56, 43, 48, 52, 44, 47, 38, 59, 41, 53, 46, 49, 50, 36, 55";
+        dataInput.value = sampleData;
+        localStorage.setItem("statisticalData", sampleData);
+      }
+
+      // Clear data
+      function clearData() {
+        if (confirm("Are you sure you want to clear all data?")) {
+          dataInput.value = "";
+          localStorage.removeItem("statisticalData");
+          resultsSection.style.display = "none";
+        }
+      }
+
+      // Calculate statistics
+      function calculateStatistics() {
+        const inputText = dataInput.value.trim();
+
+        if (!inputText) {
+          showToast("Please enter some data first.");
+          return;
+        }
+
+        // Save data to localStorage
+        localStorage.setItem("statisticalData", inputText);
+
+        // Check if data is for regression (contains x,y pairs)
+        const isRegressionData =
+          inputText.includes(",") &&
+          (inputText.includes("\n") ||
+            (inputText.match(/,/g) || []).length >
+              inputText.match(/\n/g || []).length);
+
+        let data;
+        let xValues = [];
+        let yValues = [];
+
+        if (isRegressionData) {
+          // Parse x,y pairs for regression
+          try {
+            const pairs = inputText
+              .split(/[\n\r]+/)
+              .map((line) => line.trim())
+              .filter((line) => line);
+
+            pairs.forEach((pair) => {
+              const [x, y] = pair
+                .split(",")
+                .map((val) => parseFloat(val.trim()));
+              if (isNaN(x) || isNaN(y)) {
+                throw new Error("Invalid data pair");
+              }
+              xValues.push(x);
+              yValues.push(y);
+            });
+
+            // Use all values for basic statistics
+            data = [...xValues, ...yValues];
+
+            // Show regression container
+            regressionContainer.style.display = "block";
+          } catch (error) {
+            showToast(
+              "Error parsing data pairs. Please check your input format."
+            );
+            return;
+          }
+        } else {
+          // Parse single values
+          try {
+            data = inputText
+              .split(/[\s,\n\r]+/)
+              .map((val) => parseFloat(val.trim()))
+              .filter((val) => !isNaN(val));
+
+            if (data.length === 0) {
+              showToast("No valid numbers found in the input.");
+              return;
+            }
+
+            // Hide regression container
+            regressionContainer.style.display = "none";
+          } catch (error) {
+            showToast("Error parsing data. Please check your input format.");
+            return;
+          }
+        }
+
+        // Calculate basic statistics
+        const mean = calculateMean(data);
+        const median = calculateMedian(data);
+        const mode = calculateMode(data);
+        const range = calculateRange(data);
+        const stdDev = calculateStandardDeviation(data, mean);
+        const variance = stdDev * stdDev;
+
+        // Calculate quartiles and percentiles
+        const sortedData = [...data].sort((a, b) => a - b);
+        const min = sortedData[0];
+        const max = sortedData[sortedData.length - 1];
+        const q1 = calculatePercentile(sortedData, 25);
+        const q2 = calculatePercentile(sortedData, 50);
+        const q3 = calculatePercentile(sortedData, 75);
+
+        // Update basic statistics in UI
+        document.getElementById("meanValue").textContent = mean.toFixed(2);
+        document.getElementById("medianValue").textContent = median.toFixed(2);
+        document.getElementById("modeValue").textContent = mode.join(", ");
+        document.getElementById("rangeValue").textContent = range.toFixed(2);
+        document.getElementById("stdDevValue").textContent = stdDev.toFixed(2);
+        document.getElementById("varianceValue").textContent =
+          variance.toFixed(2);
+
+        // Update quartiles in UI
+        document.getElementById("minValue").textContent = min.toFixed(2);
+        document.getElementById("q1Value").textContent = q1.toFixed(2);
+        document.getElementById("q2Value").textContent = q2.toFixed(2);
+        document.getElementById("q3Value").textContent = q3.toFixed(2);
+        document.getElementById("maxValue").textContent = max.toFixed(2);
+
+        // Calculate and display regression if applicable
+        if (isRegressionData) {
+          const regression = calculateLinearRegression(xValues, yValues);
+
+          document.getElementById(
+            "regressionEquation"
+          ).textContent = `y = ${regression.slope.toFixed(
+            2
+          )}x + ${regression.intercept.toFixed(2)}`;
+          document.getElementById("rSquaredValue").textContent =
+            regression.rSquared.toFixed(3);
+          document.getElementById("correlationValue").textContent =
+            regression.correlation.toFixed(3);
+          document.getElementById("slopeValue").textContent =
+            regression.slope.toFixed(3);
+          document.getElementById("interceptValue").textContent =
+            regression.intercept.toFixed(3);
+        }
+
+        // Generate histogram
+        generateHistogram(sortedData);
+
+        // Detect outliers
+        detectOutliers(sortedData, q1, q3);
+
+        // Show results section
+        resultsSection.style.display = "block";
+
+        // Scroll to results
+        resultsSection.scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Calculate mean
+      function calculateMean(data) {
+        return data.reduce((sum, val) => sum + val, 0) / data.length;
+      }
+
+      // Calculate median
+      function calculateMedian(data) {
+        const sortedData = [...data].sort((a, b) => a - b);
+        const mid = Math.floor(sortedData.length / 2);
+
+        if (sortedData.length % 2 === 0) {
+          return (sortedData[mid - 1] + sortedData[mid]) / 2;
+        } else {
+          return sortedData[mid];
+        }
+      }
+
+      // Calculate mode
+      function calculateMode(data) {
+        const counts = {};
+        let maxCount = 0;
+        let modes = [];
+
+        data.forEach((val) => {
+          counts[val] = (counts[val] || 0) + 1;
+          if (counts[val] > maxCount) {
+            maxCount = counts[val];
+          }
+        });
+
+        // Find all values that appear with the maximum frequency
+        for (const [val, count] of Object.entries(counts)) {
+          if (count === maxCount) {
+            modes.push(parseFloat(val));
+          }
+        }
+
+        // If all values appear the same number of times, there is no mode
+        if (modes.length === Object.keys(counts).length) {
+          return ["No mode"];
+        }
+
+        return modes;
+      }
+
+      // Calculate range
+      function calculateRange(data) {
+        return Math.max(...data) - Math.min(...data);
+      }
+
+      // Calculate standard deviation
+      function calculateStandardDeviation(data, mean) {
+        const squaredDiffs = data.map((val) => Math.pow(val - mean, 2));
+        const variance =
+          squaredDiffs.reduce((sum, val) => sum + val, 0) / data.length;
+        return Math.sqrt(variance);
+      }
+
+      // Calculate percentile
+      function calculatePercentile(sortedData, percentile) {
+        const index = (percentile / 100) * (sortedData.length - 1);
+        const lower = Math.floor(index);
+        const upper = Math.ceil(index);
+        const weight = index - lower;
+
+        if (upper === lower) {
+          return sortedData[index];
+        }
+
+        return sortedData[lower] * (1 - weight) + sortedData[upper] * weight;
+      }
+
+      // Calculate linear regression
+      function calculateLinearRegression(xValues, yValues) {
+        const n = xValues.length;
+
+        // Calculate means
+        const xMean = calculateMean(xValues);
+        const yMean = calculateMean(yValues);
+
+        // Calculate sums for regression formula
+        let sumXY = 0;
+        let sumXSquared = 0;
+        let sumYSquared = 0;
+
+        for (let i = 0; i < n; i++) {
+          sumXY += xValues[i] * yValues[i];
+          sumXSquared += xValues[i] * xValues[i];
+          sumYSquared += yValues[i] * yValues[i];
+        }
+
+        // Calculate slope and intercept
+        const numerator = sumXY - n * xMean * yMean;
+        const denominator = sumXSquared - n * xMean * xMean;
+
+        const slope = numerator / denominator;
+        const intercept = yMean - slope * xMean;
+
+        // Calculate correlation coefficient
+        let sumXDiffYDiff = 0;
+        let sumXDiffSquared = 0;
+        let sumYDiffSquared = 0;
+
+        for (let i = 0; i < n; i++) {
+          const xDiff = xValues[i] - xMean;
+          const yDiff = yValues[i] - yMean;
+
+          sumXDiffYDiff += xDiff * yDiff;
+          sumXDiffSquared += xDiff * xDiff;
+          sumYDiffSquared += yDiff * yDiff;
+        }
+
+        const correlation =
+          sumXDiffYDiff / Math.sqrt(sumXDiffSquared * sumYDiffSquared);
+        const rSquared = correlation * correlation;
+
+        return {
+          slope,
+          intercept,
+          correlation,
+          rSquared,
+        };
+      }
+
+      // Generate histogram
+      function generateHistogram(sortedData) {
+        const histogram = document.getElementById("histogram");
+        const histogramLabels = document.getElementById("histogramLabels");
+
+        // Clear previous histogram
+        histogram.innerHTML = "";
+        histogramLabels.innerHTML = "";
+
+        // Calculate number of bins (Sturges' formula)
+        const numBins = Math.ceil(1 + 3.322 * Math.log10(sortedData.length));
+
+        // Calculate bin width
+        const min = sortedData[0];
+        const max = sortedData[sortedData.length - 1];
+        const binWidth = (max - min) / numBins;
+
+        // Create bins
+        const bins = Array(numBins).fill(0);
+        const binRanges = [];
+
+        // Calculate bin ranges
+        for (let i = 0; i < numBins; i++) {
+          const binStart = min + i * binWidth;
+          const binEnd = binStart + binWidth;
+          binRanges.push({ start: binStart, end: binEnd });
+        }
+
+        // Count values in each bin
+        sortedData.forEach((val) => {
+          for (let i = 0; i < numBins; i++) {
+            if (
+              val >= binRanges[i].start &&
+              (val < binRanges[i].end ||
+                (i === numBins - 1 && val === binRanges[i].end))
+            ) {
+              bins[i]++;
+              break;
+            }
+          }
+        });
+
+        // Find maximum bin count for scaling
+        const maxBinCount = Math.max(...bins);
+
+        // Create histogram bars
+        bins.forEach((count, i) => {
+          const height = count > 0 ? (count / maxBinCount) * 100 : 0;
+
+          const bar = document.createElement("div");
+          bar.className = "histogram-bar";
+          bar.style.height = `${height}%`;
+          bar.setAttribute("data-count", count);
+
+          histogram.appendChild(bar);
+        });
+
+        // Create histogram labels
+        const numLabels = Math.min(numBins, 5); // Limit to 5 labels to avoid overcrowding
+        const labelStep = Math.ceil(numBins / numLabels);
+
+        for (let i = 0; i < numBins; i += labelStep) {
+          const label = document.createElement("span");
+          label.textContent = binRanges[i].start.toFixed(1);
+          histogramLabels.appendChild(label);
+        }
+
+        // Add the last label
+        const lastLabel = document.createElement("span");
+        lastLabel.textContent = binRanges[numBins - 1].end.toFixed(1);
+        histogramLabels.appendChild(lastLabel);
+      }
+
+      // Detect outliers using IQR method
+      function detectOutliers(sortedData, q1, q3) {
+        const outliersList = document.getElementById("outliersList");
+
+        // Clear previous outliers
+        outliersList.innerHTML = "";
+
+        // Calculate IQR and bounds
+        const iqr = q3 - q1;
+        const lowerBound = q1 - 1.5 * iqr;
+        const upperBound = q3 + 1.5 * iqr;
+
+        // Find outliers
+        const outliers = sortedData.filter(
+          (val) => val < lowerBound || val > upperBound
+        );
+
+        // Display outliers
+        if (outliers.length > 0) {
+          outliers.forEach((val) => {
+            const outlierItem = document.createElement("div");
+            outlierItem.className = "outlier-item";
+
+            const outlierValue = document.createElement("span");
+            outlierValue.className = "outlier-value";
+            outlierValue.textContent = val.toFixed(2);
+
+            const outlierInfo = document.createElement("span");
+            outlierInfo.className = "outlier-info";
+
+            if (val < lowerBound) {
+              outlierInfo.textContent = `Below lower bound (${lowerBound.toFixed(
+                2
+              )})`;
+            } else {
+              outlierInfo.textContent = `Above upper bound (${upperBound.toFixed(
+                2
+              )})`;
+            }
+
+            outlierItem.appendChild(outlierValue);
+            outlierItem.appendChild(outlierInfo);
+            outliersList.appendChild(outlierItem);
+          });
+        } else {
+          outliersList.innerHTML =
+            '<p class="no-outliers">No outliers detected in the data set.</p>';
+        }
+      }
+
+      // Show toast notification
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // DOM Elements
+      const hamburgerMenu = document.getElementById("hamburgerMenu");
+      const navMenu = document.getElementById("navMenu");
+      const navMenuOverlay = document.getElementById("navMenuOverlay");
+      const toast = document.getElementById("toast");
+      const toastIcon = document.getElementById("toastIcon");
+      const toastMessage = document.getElementById("toastMessage");
+      const toastClose = document.getElementById("toastClose");
+
+      // Event Listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set up hamburger menu
+        hamburgerMenu.addEventListener("click", toggleNavMenu);
+        navMenuOverlay.addEventListener("click", closeNavMenu);
+
+        // Set up toast close button
+        toastClose.addEventListener("click", hideToast);
+
+        // Set active nav link
+        setActiveNavLink();
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Toggle navigation menu
+      function toggleNavMenu() {
+        hamburgerMenu.classList.toggle("open");
+        navMenu.classList.toggle("open");
+        navMenuOverlay.classList.toggle("open");
+
+        // Add event listener to close nav menu when clicking outside
+        document.addEventListener("click", closeNavMenuOutside);
+      }
+
+      // Close navigation menu
+      function closeNavMenu() {
+        hamburgerMenu.classList.remove("open");
+        navMenu.classList.remove("open");
+        navMenuOverlay.classList.remove("open");
+
+        // Remove event listener
+        document.removeEventListener("click", closeNavMenuOutside);
+      }
+
+      // Close nav menu when clicking outside
+      function closeNavMenuOutside(event) {
+        if (
+          !navMenu.contains(event.target) &&
+          !hamburgerMenu.contains(event.target)
+        ) {
+          closeNavMenu();
+        }
+      }
+
+      // Set active nav link based on current page
+      function setActiveNavLink() {
+        const currentPage = window.location.pathname.split("/").pop();
+        const navLinks = document.querySelectorAll(".nav-menu-link");
+
+        navLinks.forEach((link) => {
+          const linkPage = link.getAttribute("href");
+          if (linkPage === currentPage) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+
+      // Show toast notification
+      function showToast(message, type = "success") {
+        // Set toast icon based on type
+        let icon = "";
+
+        switch (type) {
+          case "success":
+            icon = "✅";
+            break;
+          case "error":
+            icon = "❌";
+            break;
+          case "warning":
+            icon = "⚠️";
+            break;
+          default:
+            icon = "ℹ️";
+        }
+
+        toastIcon.textContent = icon;
+        toastMessage.textContent = message;
+
+        // Remove existing classes
+        toast.classList.remove("success", "error", "warning");
+
+        // Add new class
+        toast.classList.add(type);
+
+        // Show toast
+        toast.classList.add("show");
+
+        // Hide toast after 3 seconds
+        setTimeout(hideToast, 3000);
+      }
+
+      // Hide toast notification
+      function hideToast() {
+        toast.classList.remove("show");
+      }
+
+      // Replace all alert() calls with showToast()
+      window.originalAlert = window.alert;
+      window.alert = function (message) {
+        showToast(message, "warning");
+      };
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

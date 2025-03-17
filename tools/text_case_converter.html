@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Case Converter | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .converter-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .textarea-container {
+        position: relative;
+      }
+
+      .text-input {
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      .text-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .clear-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(248, 81, 73, 0.2);
+        color: var(--danger);
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+      }
+
+      .clear-btn:hover {
+        background: rgba(248, 81, 73, 0.3);
+      }
+
+      .conversion-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+      }
+
+      .option-btn {
+        background: var(--bg-dark);
+        color: var(--text-light);
+        border: 1px solid var(--border);
+        padding: 12px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .option-btn:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .option-btn:active {
+        transform: scale(0.98);
+      }
+
+      .option-icon {
+        font-size: 1.2rem;
+      }
+
+      .result-container {
+        margin-top: 20px;
+      }
+
+      .result-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .result-text {
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+        justify-content: flex-end;
+      }
+
+      .action-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-btn:hover {
+        background: var(--primary-hover);
+      }
+
+      .action-btn.secondary {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+      }
+
+      .action-btn.secondary:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .special-options {
+        margin-top: 30px;
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .special-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .special-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .special-btn {
+        background: var(--bg- minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .special-btn {
+        background: var(--bg-dark);
+        color: var(--text-light);
+        border: 1px solid var(--border);
+        padding: 12px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .special-btn:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .conversion-options,
+        .special-buttons {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .conversion-options,
+        .special-buttons {
+          grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home</a
+      >
+
+      <h1>Text Case Converter</h1>
+      <p class="description"
+        >Convert text to different cases, remove extra spaces, reverse text, and
+        more.</p
+      >
+
+      <div class="converter-container">
+        <div class="textarea-container">
+          <textarea
+            class="text-input"
+            id="inputText"
+            placeholder="Type or paste your text here..."></textarea>
+          <button class="clear-btn" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="conversion-options">
+          <button class="option-btn" onclick="convertCase('upper')">
+            <span class="option-icon">🔠</span> UPPERCASE
+          </button>
+
+          <button class="option-btn" onclick="convertCase('lower')">
+            <span class="option-icon">🔡</span> lowercase
+          </button>
+
+          <button class="option-btn" onclick="convertCase('title')">
+            <span class="option-icon">📝</span> Title Case
+          </button>
+
+          <button class="option-btn" onclick="convertCase('sentence')">
+            <span class="option-icon">📄</span> Sentence case
+          </button>
+
+          <button class="option-btn" onclick="convertCase('alternating')">
+            <span class="option-icon">🔄</span> aLtErNaTiNg CaSe
+          </button>
+
+          <button class="option-btn" onclick="convertCase('inverse')">
+            <span class="option-icon">🔄</span> InVeRsE cAsE
+          </button>
+        </div>
+
+        <div class="result-container">
+          <h3 class="result-title">Result:</h3>
+          <textarea class="result-text" id="resultText" readonly></textarea>
+
+          <div class="action-buttons">
+            <button class="action-btn secondary" onclick="copyToInput()">
+              <span>⬆️</span> Use as Input
+            </button>
+
+            <button class="action-btn" onclick="copyToClipboard()">
+              <span>📋</span> Copy to Clipboard
+            </button>
+          </div>
+        </div>
+
+        <div class="special-options">
+          <h3 class="special-title">Special Transformations</h3>
+
+          <div class="special-buttons">
+            <button class="special-btn" onclick="removeExtraSpaces()">
+              <span>🔍</span> Remove Extra Spaces
+            </button>
+
+            <button class="special-btn" onclick="reverseText()">
+              <span>🔄</span> Reverse Text
+            </button>
+
+            <button class="special-btn" onclick="removeSpecialChars()">
+              <span>🧹</span> Remove Special Characters
+            </button>
+
+            <button class="special-btn" onclick="countWords()">
+              <span>🔢</span> Count Words
+            </button>
+
+            <button class="special-btn" onclick="sortLines('asc')">
+              <span>🔼</span> Sort Lines A-Z
+            </button>
+
+            <button class="special-btn" onclick="sortLines('desc')">
+              <span>🔽</span> Sort Lines Z-A
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <script>
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Get DOM elements
+      const inputText = document.getElementById("inputText");
+      const resultText = document.getElementById("resultText");
+      const clearBtn = document.getElementById("clearBtn");
+      const toast = document.getElementById("toast");
+
+      // Add event listeners
+      clearBtn.addEventListener("click", clearText);
+
+      // Load saved text if available
+      document.addEventListener("DOMContentLoaded", function () {
+        const savedInput = localStorage.getItem("textConverterInput");
+        if (savedInput) {
+          inputText.value = savedInput;
+        }
+      });
+
+      // Save input text to localStorage
+      inputText.addEventListener("input", function () {
+        localStorage.setItem("textConverterInput", inputText.value);
+      });
+
+      // Convert text case
+      function convertCase(caseType) {
+        const text = inputText.value;
+
+        if (!text.trim()) {
+          showToast("Please enter some text first.");
+          return;
+        }
+
+        let result = "";
+
+        switch (caseType) {
+          case "upper":
+            result = text.toUpperCase();
+            break;
+
+          case "lower":
+            result = text.toLowerCase();
+            break;
+
+          case "title":
+            result = text.replace(/\w\S*/g, function (txt) {
+              return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+            break;
+
+          case "sentence":
+            result = text
+              .toLowerCase()
+              .replace(/(^\s*\w|[.!?]\s*\w)/g, function (txt) {
+                return txt.toUpperCase();
+              });
+            break;
+
+          case "alternating":
+            result = text
+              .split("")
+              .map((char, index) =>
+                index % 2 === 0 ? char.toLowerCase() : char.toUpperCase()
+              )
+              .join("");
+            break;
+
+          case "inverse":
+            result = text
+              .split("")
+              .map((char) => {
+                if (char === char.toUpperCase()) {
+                  return char.toLowerCase();
+                } else {
+                  return char.toUpperCase();
+                }
+              })
+              .join("");
+            break;
+        }
+
+        resultText.value = result;
+      }
+
+      // Remove extra spaces
+      function removeExtraSpaces() {
+        const text = inputText.value;
+
+        if (!text.trim()) {
+          showToast("Please enter some text first.");
+          return;
+        }
+
+        // Replace multiple spaces with a single space
+        const result = text.replace(/\s+/g, " ").trim();
+
+        resultText.value = result;
+        showToast("Extra spaces removed.");
+      }
+
+      // Reverse text
+      function reverseText() {
+        const text = inputText.value;
+
+        if (!text.trim()) {
+          showToast("Please enter some text first.");
+          return;
+        }
+
+        const result = text.split("").reverse().join("");
+
+        resultText.value = result;
+        showToast("Text reversed.");
+      }
+
+      // Remove special characters
+      function removeSpecialChars() {
+        const text = inputText.value;
+
+        if (!text.trim()) {
+          showToast("Please enter some text first.");
+          return;
+        }
+
+        // Remove all non-alphanumeric characters except spaces
+        const result = text.replace(/[^\w\s]/gi, "");
+
+        resultText.value = result;
+        showToast("Special characters removed.");
+      }
+
+      // Count words
+      function countWords() {
+        const text = inputText.value;
+
+        if (!text.trim()) {
+          showToast("Please enter some text first.");
+          return;
+        }
+
+        const wordCount = text.trim().split(/\s+/).length;
+
+        showToast(`Word count: ${wordCount}`);
+      }
+
+      // Sort lines
+      function sortLines(direction) {
+        const text = inputText.value;
+
+        if (!text.trim()) {
+          showToast("Please enter some text first.");
+          return;
+        }
+
+        // Split text into lines, sort them, and join back
+        const lines = text.split("\n");
+
+        if (direction === "asc") {
+          lines.sort();
+        } else {
+          lines.sort().reverse();
+        }
+
+        const result = lines.join("\n");
+
+        resultText.value = result;
+        showToast("Lines sorted.");
+      }
+
+      // Copy result to clipboard
+      function copyToClipboard() {
+        const result = resultText.value;
+
+        if (!result.trim()) {
+          showToast("No result to copy.");
+          return;
+        }
+
+        navigator.clipboard.writeText(result).then(
+          function () {
+            showToast("Copied to clipboard!");
+          },
+          function () {
+            showToast("Failed to copy. Please try again.");
+          }
+        );
+      }
+
+      document
+        .getElementById("chatInput")
+        .addEventListener("input", function (event) {
+          // Trigger sound if a non-letter (e.g., number, symbol) is typed
+          if (/[^a-zA-Z]/.test(event.target.value)) {
+            playRandomSound();
+          }
+        });
+
+      // Use result as input
+      function copyToInput() {
+        const result = resultText.value;
+
+        if (!result.trim()) {
+          showToast("No result to use as input.");
+          return;
+        }
+
+        inputText.value = result;
+        localStorage.setItem("textConverterInput", result);
+        showToast("Result set as input.");
+      }
+
+      // Clear text
+      function clearText() {
+        if (confirm("Are you sure you want to clear the input text?")) {
+          inputText.value = "";
+          resultText.value = "";
+          localStorage.removeItem("textConverterInput");
+        }
+      }
+
+      // Show toast notification
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(function () {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // DOM Elements
+      const hamburgerMenu = document.getElementById("hamburgerMenu");
+      const navMenu = document.getElementById("navMenu");
+      const navMenuOverlay = document.getElementById("navMenuOverlay");
+
+      const toastIcon = document.getElementById("toastIcon");
+      const toastMessage = document.getElementById("toastMessage");
+      const toastClose = document.getElementById("toastClose");
+
+      // Event Listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set up hamburger menu
+        hamburgerMenu.addEventListener("click", toggleNavMenu);
+        navMenuOverlay.addEventListener("click", closeNavMenu);
+
+        // Set up toast close button
+        toastClose.addEventListener("click", hideToast);
+
+        // Set active nav link
+        setActiveNavLink();
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Toggle navigation menu
+      function toggleNavMenu() {
+        hamburgerMenu.classList.toggle("open");
+        navMenu.classList.toggle("open");
+        navMenuOverlay.classList.toggle("open");
+
+        // Add event listener to close nav menu when clicking outside
+        document.addEventListener("click", closeNavMenuOutside);
+      }
+
+      // Close navigation menu
+      function closeNavMenu() {
+        hamburgerMenu.classList.remove("open");
+        navMenu.classList.remove("open");
+        navMenuOverlay.classList.remove("open");
+
+        // Remove event listener
+        document.removeEventListener("click", closeNavMenuOutside);
+      }
+
+      // Close nav menu when clicking outside
+      function closeNavMenuOutside(event) {
+        if (
+          !navMenu.contains(event.target) &&
+          !hamburgerMenu.contains(event.target)
+        ) {
+          closeNavMenu();
+        }
+      }
+
+      // Set active nav link based on current page
+      function setActiveNavLink() {
+        const currentPage = window.location.pathname.split("/").pop();
+        const navLinks = document.querySelectorAll(".nav-menu-link");
+
+        navLinks.forEach((link) => {
+          const linkPage = link.getAttribute("href");
+          if (linkPage === currentPage) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+
+      // Show toast notification
+      function showToast(message, type = "success") {
+        // Set toast icon based on type
+        let icon = "";
+
+        switch (type) {
+          case "success":
+            icon = "✅";
+            break;
+          case "error":
+            icon = "❌";
+            break;
+          case "warning":
+            icon = "⚠️";
+            break;
+          default:
+            icon = "ℹ️";
+        }
+
+        toastIcon.textContent = icon;
+        toastMessage.textContent = message;
+
+        // Remove existing classes
+        toast.classList.remove("success", "error", "warning");
+
+        // Add new class
+        toast.classList.add(type);
+
+        // Show toast
+        toast.classList.add("show");
+
+        // Hide toast after 3 seconds
+        setTimeout(hideToast, 3000);
+      }
+
+      // Hide toast notification
+      function hideToast() {
+        toast.classList.remove("show");
+      }
+
+      // Replace all alert() calls with showToast()
+      window.originalAlert = window.alert;
+      window.alert = function (message) {
+        showToast(message, "warning");
+      };
+    </script>
+    <script src="/js/script.js"></script>
+  </body>
+</html>

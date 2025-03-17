@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- Open Graph (OG) for Facebook & LinkedIn -->
+    <meta property="og:title" content="School Tools Hub – Essential Student Utilities" />
+    <meta property="og:description" content="A collection of useful tools for students, including calculators, converters, and more!" />
+    <meta property="og:type" content="website" />
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#3498db" />
+ <!-- Description (Max 160 characters for best SEO results) -->
+    <meta name="description" content="School Tools Hub provides essential student utilities, including calculators, converters, and productivity tools." />
+<!-- Keywords (Not as useful for SEO but can help internal search engines) -->
+    <meta name="keywords" content="school tools, student utilities, calculators, unit converters, productivity" />
+
+    <!-- Robots Tag (Tells search engines what to index) -->
+    <meta name="robots" content="index, follow" />
+
+    <title>School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 10;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        text-align: center;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      header {
+        margin-bottom: 60px;
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 16px;
+        position: relative;
+        display: inline-block;
+      }
+
+      h1::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+      }
+
+      .tool-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid var(--border);
+        position: relative;
+      }
+
+      .tool-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px var(--shadow);
+        border-color: var(--primary);
+      }
+
+      .tool-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: var(--primary);
+      }
+
+      .tool-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-light);
+      }
+
+      .tool-description {
+        color: var(--text-muted);
+        margin-bottom: 25px;
+        flex-grow: 1;
+        line-height: 1.6;
+      }
+
+      .tool-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .tool-btn:hover {
+        background: var(--primary-hover);
+        transform: scale(1.05);
+      }
+
+      .new-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(86, 211, 100, 0.2);
+        color: var(--success);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .section-title {
+        font-size: 2rem;
+        color: var(--primary);
+        margin: 60px 0 30px;
+        position: relative;
+        display: inline-block;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 2px;
+      }
+
+      footer {
+        margin-top: auto;
+        padding: 20px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        border-top: 1px solid var(--border);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        .tools-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        .container {
+          padding: 30px 15px;
+        }
+
+        .section-title {
+          font-size: 1.8rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .subtitle {
+          font-size: 1rem;
+        }
+
+        .tool-card {
+          padding: 20px;
+        }
+
+        .tool-icon {
+          font-size: 2.5rem;
+        }
+
+        .tool-title {
+          font-size: 1.3rem;
+        }
+
+        .tool-btn {
+          padding: 10px 20px;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <header>
+        <h1>School Tools Hub</h1>
+        <p class="subtitle"
+          >Your comprehensive toolkit for academic calculations, grade
+          management, productivity, and educational resources.</p
+        >
+      </header>
+
+      <h2 class="section-title">Grade Calculators</h2>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-icon">📊</div>
+          <h2 class="tool-title">GWA Calculator</h2>
+          <p class="tool-description"
+            >Calculate your Grade Weighted Average (GWA) based on the 5-point
+            scale system used in many universities.</p
+          >
+          <a href="tools/gwa_calculator.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-icon">📈</div>
+          <h2 class="tool-title">General Average Calculator</h2>
+          <p class="tool-description"
+            >Calculate your overall percentage average across all subjects with
+            accurate percentage-based calculations.</p
+          >
+          <a href="tools/general_average_counter.html" class="tool-btn"
+            >Open Tool</a
+          >
+        </div>
+      </div>
+
+      <h2 class="section-title">Productivity Tools</h2>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">⏱️</div>
+          <h2 class="tool-title">Pomodoro Timer</h2>
+          <p class="tool-description"
+            >Boost your productivity with customizable work/break sessions,
+            notifications, and progress tracking for effective study
+            sessions.</p
+          >
+          <a href="tools/pomodoro_timer.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">🔄</div>
+          <h2 class="tool-title">Unit Converter</h2>
+          <p class="tool-description"
+            >Convert between all types of units with step-by-step explanations.
+            Includes length, volume, weight, temperature, time, and more.</p
+          >
+          <a href="tools/unit_converter.html" class="tool-btn">Open Tool</a>
+        </div>
+      </div>
+
+      <h2 class="section-title">Language & Writing Tools</h2>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📖</div>
+          <h2 class="tool-title">Dictionary & Thesaurus</h2>
+          <p class="tool-description"
+            >Look up word definitions, examples, synonyms, antonyms,
+            pronunciations, and etymology. Includes word frequency analysis and
+            a random word generator.</p
+          >
+          <a href="tools/dictionary.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📝</div>
+          <h2 class="tool-title">Word & Character Counter</h2>
+          <p class="tool-description"
+            >Count words, characters, sentences, and paragraphs in real-time.
+            Includes reading time estimates, keyword density checker, and basic
+            grammar suggestions.</p
+          >
+          <a href="tools/word_counter.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">⌨️</div>
+          <h2 class="tool-title">Typing Speed Test</h2>
+          <p class="tool-description"
+            >Measure your typing speed (WPM) and accuracy with customizable
+            texts. Features real-time mistake highlighting and performance
+            tracking.</p
+          >
+          <a href="tools/typing_test.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">🔤</div>
+          <h2 class="tool-title">Text Case Converter</h2>
+          <p class="tool-description"
+            >Convert text to uppercase, lowercase, sentence case, or title case.
+            Remove extra spaces, reverse text, and clean special characters.</p
+          >
+          <a href="tools/text_case_converter.html" class="tool-btn"
+            >Open Tool</a
+          >
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📖</div>
+          <h2 class="tool-title">Readability Score Checker</h2>
+          <p class="tool-description"
+            >Analyze text readability with Flesch-Kincaid scores, sentence
+            complexity analysis, and passive voice detection. Get suggestions
+            for simplification.</p
+          >
+          <a href="tools/readability_checker.html" class="tool-btn"
+            >Open Tool</a
+          >
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📚</div>
+          <h2 class="tool-title">Citation Generator</h2>
+          <p class="tool-description"
+            >Generate citations in APA, MLA, and Chicago formats for books,
+            websites, and journals. Includes copy/paste function and reference
+            list management.</p
+          >
+          <a href="tools/citation_generator.html" class="tool-btn">Open Tool</a>
+        </div>
+      </div>
+
+      <h2 class="section-title">Math & Data Tools</h2>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">⚖️</div>
+          <h2 class="tool-title">BMI Calculator</h2>
+          <p class="tool-description"
+            >Calculate your Body Mass Index with classification and health
+            recommendations. Supports both metric and imperial units with body
+            fat percentage estimation.</p
+          >
+          <a href="tools/bmi_calculator.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📊</div>
+          <h2 class="tool-title">Statistical Calculator</h2>
+          <p class="tool-description"
+            >Compute mean, median, mode, standard deviation, variance,
+            quartiles, and percentiles. Includes linear regression and histogram
+            generation.</p
+          >
+          <a href="tools/statistical_calculator.html" class="tool-btn"
+            >Open Tool</a
+          >
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">🔭</div>
+          <h2 class="tool-title">Physics Calculator</h2>
+          <p class="tool-description"></p>
+            – Solve physics problems with formulas for motion, force, energy,
+            electricity, waves, and thermodynamics.
+          </p>
+          <a href="tools/physics_calculator.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📐</div>
+          <h2 class="tool-title">Trigonometry Solver</h2>
+          <p class="tool-description"
+            >Solve triangle problems by finding missing angles and sides.
+            Supports radians and degrees with trig functions and Pythagorean
+            theorem calculations.</p
+          >
+          <a href="tools/trigonometry_solver.html" class="tool-btn"
+            >Open Tool</a
+          >
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📂</div>
+          <h2 class="tool-title">Data Sorting & Filtering</h2>
+          <p class="tool-description"
+            >Sort data alphabetically or numerically, apply custom filters,
+            remove duplicates, and export results. Includes frequency counting
+            for words or numbers.</p
+          >
+          <a href="tools/data_sorting.html" class="tool-btn">Open Tool</a>
+        </div>
+
+        <div class="tool-card">
+          <span class="new-badge">New</span>
+          <div class="tool-icon">📄</div>
+          <h2 class="tool-title">Document Metadata Viewer</h2>
+          <p class="tool-description"
+            >View hidden metadata in documents including author, date, file
+            type, size, and last modified date. Extract text and remove
+            sensitive metadata.</p
+          >
+          <a href="tools/metadata_viewer.html" class="tool-btn">Open Tool</a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p
+        >Designed and developed by
+        <a
+          href="https://www.facebook.com/61560816188544"
+          class="social-link"
+          target="_blank"
+          >@driyqnn</a
+        >
+        | &copy; 2025 School Tools Hub</p
+      >
+    </footer>
+
+    <script>
+      // Check for saved theme preference or default to dark
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+    </script>
+    <script src="/js/script.js"></script>
+  </body>
+</html>

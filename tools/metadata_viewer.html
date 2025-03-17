@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Metadata Viewer | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .tool-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .input-section,
+      .output-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .file-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 30px;
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        background: var(--bg-dark);
+        transition: all 0.3s ease;
+      }
+
+      .file-upload-container.dragover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.05);
+      }
+
+      .file-upload-icon {
+        font-size: 3rem;
+        color: var(--text-muted);
+      }
+
+      .file-upload-text {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+      }
+
+      .file-upload-input {
+        display: none;
+      }
+
+      .file-upload-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-family: "Poppins", sans-serif;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .file-upload-btn:hover {
+        background: var(--primary-hover);
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        margin-top: 20px;
+      }
+
+      .file-icon {
+        font-size: 2rem;
+        color: var(--primary);
+      }
+
+      .file-details {
+        flex: 1;
+      }
+
+      .file-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .file-size {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .file-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .file-action-btn {
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-light);
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .file-action-btn:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .metadata-container {
+        background: var(--bg-dark);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+
+      .metadata-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: rgba(88, 166, 255, 0.1);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .metadata-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .metadata-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .metadata-action-btn {
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-light);
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .metadata-action-btn:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .metadata-content {
+        padding: 20px;
+      }
+
+      .metadata-group {
+        margin-bottom: 25px;
+      }
+
+      .metadata-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .metadata-group-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .metadata-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .metadata-table tr {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .metadata-table tr:last-child {
+        border-bottom: none;
+      }
+
+      .metadata-table td {
+        padding: 10px 5px;
+        vertical-align: top;
+      }
+
+      .metadata-table td:first-child {
+        width: 40%;
+        font-weight: 500;
+        color: var(--text-light);
+      }
+
+      .metadata-table td:last-child {
+        color: var(--text-muted);
+        word-break: break-all;
+      }
+
+      .preview-container {
+        margin-top: 20px;
+        background: var(--bg-dark);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+
+      .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: rgba(88, 166, 255, 0.1);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .preview-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .preview-content {
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+      }
+
+      .preview-image {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 4px;
+      }
+
+      .preview-text {
+        width: 100%;
+        height: 300px;
+        padding: 15px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-light);
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        resize: none;
+        white-space: pre;
+        overflow: auto;
+      }
+
+      .preview-audio {
+        width: 100%;
+      }
+
+      .preview-video {
+        max-width: 100%;
+        max-height: 400px;
+      }
+
+      .preview-pdf {
+        width: 100%;
+        height: 500px;
+        border: none;
+      }
+
+      .preview-not-available {
+        color: var(--text-muted);
+        text-align: center;
+        padding: 30px;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .file-upload-container {
+          padding: 20px;
+        }
+
+        .file-info {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .file-actions {
+          margin-top: 10px;
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .metadata-table td {
+          display: block;
+          width: 100%;
+        }
+
+        .metadata-table td:first-child {
+          padding-bottom: 0;
+          width: 100%;
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home</a
+      >
+
+      <h1>Document Metadata Viewer</h1>
+      <p class="description"
+        >View metadata information from various file types including images,
+        PDFs, audio, and more.</p
+      >
+
+      <div class="tool-container">
+        <div class="input-section">
+          <h2 class="section-title"> <span>📁</span> Upload File </h2>
+
+          <div class="file-upload-container" id="dropZone">
+            <div class="file-upload-icon">📄</div>
+            <p class="file-upload-text"
+              >Drag and drop a file here, or click to select a file</p
+            >
+            <p
+              class="file-upload-text"
+              style="font-size: 0.9rem; color: var(--text-muted)">
+              Supported file types: Images, PDFs, Audio, Video, Text, and more
+            </p>
+
+            <input type="file" id="fileInput" class="file-upload-input" />
+            <button
+              class="file-upload-btn"
+              onclick="document.getElementById('fileInput').click()">
+              <span>📂</span> Select File
+            </button>
+          </div>
+
+          <div id="fileInfo" style="display: none"></div>
+        </div>
+
+        <div class="output-section" id="outputSection" style="display: none">
+          <h2 class="section-title"> <span>📊</span> File Metadata </h2>
+
+          <div class="metadata-container">
+            <div class="metadata-header">
+              <div class="metadata-title">Metadata Information</div>
+              <div class="metadata-actions">
+                <button class="metadata-action-btn" onclick="copyMetadata()">
+                  <span>📋</span> Copy
+                </button>
+                <button class="metadata-action-btn" onclick="exportMetadata()">
+                  <span>💾</span> Export
+                </button>
+              </div>
+            </div>
+
+            <div class="metadata-content" id="metadataContent">
+              <!-- Metadata content will be inserted here -->
+            </div>
+          </div>
+
+          <div class="preview-container" id="previewContainer">
+            <div class="preview-header">
+              <div class="preview-title">File Preview</div>
+            </div>
+
+            <div class="preview-content" id="previewContent">
+              <!-- Preview content will be inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <script>
+      // Initialize variables
+      let currentFile = null;
+      let metadata = {};
+
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Add event listeners when DOM is loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set up file input change event
+        const fileInput = document.getElementById("fileInput");
+        fileInput.addEventListener("change", handleFileSelect);
+
+        // Set up drag and drop events
+        const dropZone = document.getElementById("dropZone");
+
+        dropZone.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add("dragover");
+        });
+
+        dropZone.addEventListener("dragleave", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove("dragover");
+        });
+
+        dropZone.addEventListener("drop", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove("dragover");
+
+          if (e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
+          }
+        });
+
+        // Update theme toggle
+        updateThemeToggle();
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Handle file select from input
+      function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+          handleFile(file);
+        }
+      }
+
+      // Handle file processing
+      function handleFile(file) {
+        currentFile = file;
+
+        // Display file info
+        displayFileInfo(file);
+
+        // Extract metadata
+        extractMetadata(file);
+
+        // Show output section
+        document.getElementById("outputSection").style.display = "block";
+
+        // Scroll to output section
+        document
+          .getElementById("outputSection")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Display file info
+      function displayFileInfo(file) {
+        const fileInfo = document.getElementById("fileInfo");
+
+        // Format file size
+        const fileSize = formatFileSize(file.size);
+
+        // Get file icon based on type
+        const fileIcon = getFileIcon(file.type);
+
+        // Create file info HTML
+        fileInfo.innerHTML = `
+    <div class="file-info">
+      <div class="file-icon">${fileIcon}</div>
+      <div class="file-details">
+        <div class="file-name">${file.name}</div>
+        <div class="file-size">${fileSize} • ${
+          file.type || "Unknown type"
+        }</div>
+      </div>
+      <div class="file-actions">
+        <button class="file-action-btn" onclick="document.getElementById('fileInput').click()">
+          Change File
+        </button>
+      </div>
+    </div>
+  `;
+
+        fileInfo.style.display = "block";
+      }
+
+      // Extract metadata from file
+      function extractMetadata(file) {
+        // Reset metadata
+        metadata = {
+          basic: {
+            name: file.name,
+            type: file.type || "Unknown",
+            size: formatFileSize(file.size),
+            lastModified: new Date(file.lastModified).toLocaleString(),
+          },
+        };
+
+        // Extract metadata based on file type
+        if (file.type.startsWith("image/")) {
+          extractImageMetadata(file);
+        } else if (file.type === "application/pdf") {
+          extractPDFMetadata(file);
+        } else if (file.type.startsWith("audio/")) {
+          extractAudioMetadata(file);
+        } else if (file.type.startsWith("video/")) {
+          extractVideoMetadata(file);
+        } else if (
+          file.type === "text/plain" ||
+          file.type === "text/html" ||
+          file.type === "text/css" ||
+          file.type === "application/javascript"
+        ) {
+          extractTextMetadata(file);
+        } else {
+          // Display basic metadata for unsupported file types
+          displayMetadata();
+          createPreview(file);
+        }
+      }
+
+      // Extract image metadata
+      function extractImageMetadata(file) {
+        const img = new Image();
+        img.onload = function () {
+          metadata.image = {
+            width: img.width + "px",
+            height: img.height + "px",
+            aspectRatio: (img.width / img.height).toFixed(2),
+            resolution: img.width * img.height + " pixels",
+          };
+
+          displayMetadata();
+          createPreview(file);
+        };
+
+        img.onerror = function () {
+          showToast("Error loading image metadata.", "error");
+          displayMetadata();
+          createPreview(file);
+        };
+
+        img.src = URL.createObjectURL(file);
+      }
+
+      // Extract PDF metadata
+      function extractPDFMetadata(file) {
+        // For PDF files, we can only display basic metadata without a PDF.js library
+        displayMetadata();
+        createPreview(file);
+      }
+
+      // Extract audio metadata
+      function extractAudioMetadata(file) {
+        const audio = new Audio();
+
+        audio.onloadedmetadata = function () {
+          metadata.audio = {
+            duration: formatDuration(audio.duration),
+            channels: audio.mozChannels || "Unknown",
+            sampleRate: audio.mozSampleRate
+              ? audio.mozSampleRate + " Hz"
+              : "Unknown",
+          };
+
+          displayMetadata();
+          createPreview(file);
+        };
+
+        audio.onerror = function () {
+          showToast("Error loading audio metadata.", "error");
+          displayMetadata();
+          createPreview(file);
+        };
+
+        audio.src = URL.createObjectURL(file);
+      }
+
+      // Extract video metadata
+      function extractVideoMetadata(file) {
+        const video = document.createElement("video");
+
+        video.onloadedmetadata = function () {
+          metadata.video = {
+            width: video.videoWidth + "px",
+            height: video.videoHeight + "px",
+            duration: formatDuration(video.duration),
+            aspectRatio: (video.videoWidth / video.videoHeight).toFixed(2),
+          };
+
+          displayMetadata();
+          createPreview(file);
+        };
+
+        video.onerror = function () {
+          showToast("Error loading video metadata.", "error");
+          displayMetadata();
+          createPreview(file);
+        };
+
+        video.src = URL.createObjectURL(file);
+      }
+
+      // Extract text metadata
+      function extractTextMetadata(file) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const text = e.target.result;
+          const lines = text.split("\n");
+          const words = text.match(/\b\w+\b/g) || [];
+          const chars = text.length;
+
+          metadata.text = {
+            lines: lines.length,
+            words: words.length,
+            characters: chars,
+            charactersNoSpaces: text.replace(/\s/g, "").length,
+          };
+
+          displayMetadata();
+          createPreview(file);
+        };
+
+        reader.onerror = function () {
+          showToast("Error reading text file.", "error");
+          displayMetadata();
+          createPreview(file);
+        };
+
+        reader.readAsText(file);
+      }
+
+      // Display metadata
+      function displayMetadata() {
+        const metadataContent = document.getElementById("metadataContent");
+        metadataContent.innerHTML = "";
+
+        // Basic metadata
+        const basicGroup = document.createElement("div");
+        basicGroup.className = "metadata-group";
+
+        const basicTitle = document.createElement("h3");
+        basicTitle.className = "metadata-group-title";
+        basicTitle.textContent = "Basic Information";
+
+        const basicTable = document.createElement("table");
+        basicTable.className = "metadata-table";
+
+        for (const [key, value] of Object.entries(metadata.basic)) {
+          const row = document.createElement("tr");
+
+          const keyCell = document.createElement("td");
+          keyCell.textContent = formatKey(key);
+
+          const valueCell = document.createElement("td");
+          valueCell.textContent = value;
+
+          row.appendChild(keyCell);
+          row.appendChild(valueCell);
+          basicTable.appendChild(row);
+        }
+
+        basicGroup.appendChild(basicTitle);
+        basicGroup.appendChild(basicTable);
+        metadataContent.appendChild(basicGroup);
+
+        // Image metadata
+        if (metadata.image) {
+          const imageGroup = document.createElement("div");
+          imageGroup.className = "metadata-group";
+
+          const imageTitle = document.createElement("h3");
+          imageTitle.className = "metadata-group-title";
+          imageTitle.textContent = "Image Information";
+
+          const imageTable = document.createElement("table");
+          imageTable.className = "metadata-table";
+
+          for (const [key, value] of Object.entries(metadata.image)) {
+            const row = document.createElement("tr");
+
+            const keyCell = document.createElement("td");
+            keyCell.textContent = formatKey(key);
+
+            const valueCell = document.createElement("td");
+            valueCell.textContent = value;
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            imageTable.appendChild(row);
+          }
+
+          imageGroup.appendChild(imageTitle);
+          imageGroup.appendChild(imageTable);
+          metadataContent.appendChild(imageGroup);
+        }
+
+        // Audio metadata
+        if (metadata.audio) {
+          const audioGroup = document.createElement("div");
+          audioGroup.className = "metadata-group";
+
+          const audioTitle = document.createElement("h3");
+          audioTitle.className = "metadata-group-title";
+          audioTitle.textContent = "Audio Information";
+
+          const audioTable = document.createElement("table");
+          audioTable.className = "metadata-table";
+
+          for (const [key, value] of Object.entries(metadata.audio)) {
+            const row = document.createElement("tr");
+
+            const keyCell = document.createElement("td");
+            keyCell.textContent = formatKey(key);
+
+            const valueCell = document.createElement("td");
+            valueCell.textContent = value;
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            audioTable.appendChild(row);
+          }
+
+          audioGroup.appendChild(audioTitle);
+          audioGroup.appendChild(audioTable);
+          metadataContent.appendChild(audioGroup);
+        }
+
+        // Video metadata
+        if (metadata.video) {
+          const videoGroup = document.createElement("div");
+          videoGroup.className = "metadata-group";
+
+          const videoTitle = document.createElement("h3");
+          videoTitle.className = "metadata-group-title";
+          videoTitle.textContent = "Video Information";
+
+          const videoTable = document.createElement("table");
+          videoTable.className = "metadata-table";
+
+          for (const [key, value] of Object.entries(metadata.video)) {
+            const row = document.createElement("tr");
+
+            const keyCell = document.createElement("td");
+            keyCell.textContent = formatKey(key);
+
+            const valueCell = document.createElement("td");
+            valueCell.textContent = value;
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            videoTable.appendChild(row);
+          }
+
+          videoGroup.appendChild(videoTitle);
+          videoGroup.appendChild(videoTable);
+          metadataContent.appendChild(videoGroup);
+        }
+
+        // Text metadata
+        if (metadata.text) {
+          const textGroup = document.createElement("div");
+          textGroup.className = "metadata-group";
+
+          const textTitle = document.createElement("h3");
+          textTitle.className = "metadata-group-title";
+          textTitle.textContent = "Text Information";
+
+          const textTable = document.createElement("table");
+          textTable.className = "metadata-table";
+
+          for (const [key, value] of Object.entries(metadata.text)) {
+            const row = document.createElement("tr");
+
+            const keyCell = document.createElement("td");
+            keyCell.textContent = formatKey(key);
+
+            const valueCell = document.createElement("td");
+            valueCell.textContent = value;
+
+            row.appendChild(keyCell);
+            row.appendChild(valueCell);
+            textTable.appendChild(row);
+          }
+
+          textGroup.appendChild(textTitle);
+          textGroup.appendChild(textTable);
+          metadataContent.appendChild(textGroup);
+        }
+      }
+
+      // Create file preview
+      function createPreview(file) {
+        const previewContent = document.getElementById("previewContent");
+        previewContent.innerHTML = "";
+
+        if (file.type.startsWith("image/")) {
+          // Image preview
+          const img = document.createElement("img");
+          img.className = "preview-image";
+          img.src = URL.createObjectURL(file);
+          img.alt = file.name;
+
+          previewContent.appendChild(img);
+        } else if (file.type === "application/pdf") {
+          // PDF preview
+          const embed = document.createElement("embed");
+          embed.className = "preview-pdf";
+          embed.src = URL.createObjectURL(file);
+          embed.type = "application/pdf";
+
+          previewContent.appendChild(embed);
+        } else if (file.type.startsWith("audio/")) {
+          // Audio preview
+          const audio = document.createElement("audio");
+          audio.className = "preview-audio";
+          audio.src = URL.createObjectURL(file);
+          audio.controls = true;
+
+          previewContent.appendChild(audio);
+        } else if (file.type.startsWith("video/")) {
+          // Video preview
+          const video = document.createElement("video");
+          video.className = "preview-video";
+          video.src = URL.createObjectURL(file);
+          video.controls = true;
+
+          previewContent.appendChild(video);
+        } else if (
+          file.type === "text/plain" ||
+          file.type === "text/html" ||
+          file.type === "text/css" ||
+          file.type === "application/javascript"
+        ) {
+          // Text preview
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const textarea = document.createElement("textarea");
+            textarea.className = "preview-text";
+            textarea.value = e.target.result;
+            textarea.readOnly = true;
+
+            previewContent.appendChild(textarea);
+          };
+
+          reader.onerror = function () {
+            showPreviewNotAvailable();
+          };
+
+          reader.readAsText(file);
+        } else {
+          // No preview available
+          showPreviewNotAvailable();
+        }
+      }
+
+      // Show preview not available message
+      function showPreviewNotAvailable() {
+        const previewContent = document.getElementById("previewContent");
+        previewContent.innerHTML =
+          '<div class="preview-not-available">Preview not available for this file type</div>';
+      }
+
+      // Copy metadata to clipboard
+      function copyMetadata() {
+        // Create formatted metadata text
+        let metadataText = "File Metadata:\n\n";
+
+        // Basic metadata
+        metadataText += "Basic Information:\n";
+        for (const [key, value] of Object.entries(metadata.basic)) {
+          metadataText += `${formatKey(key)}: ${value}\n`;
+        }
+
+        // Image metadata
+        if (metadata.image) {
+          metadataText += "\nImage Information:\n";
+          for (const [key, value] of Object.entries(metadata.image)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Audio metadata
+        if (metadata.audio) {
+          metadataText += "\nAudio Information:\n";
+          for (const [key, value] of Object.entries(metadata.audio)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Video metadata
+        if (metadata.video) {
+          metadataText += "\nVideo Information:\n";
+          for (const [key, value] of Object.entries(metadata.video)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Text metadata
+        if (metadata.text) {
+          metadataText += "\nText Information:\n";
+          for (const [key, value] of Object.entries(metadata.text)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Copy to clipboard
+        navigator.clipboard
+          .writeText(metadataText)
+          .then(() => {
+            showToast("Metadata copied to clipboard!");
+          })
+          .catch(() => {
+            showToast("Failed to copy metadata.", "error");
+          });
+      }
+
+      // Export metadata as text file
+      function exportMetadata() {
+        // Create formatted metadata text
+        let metadataText = "File Metadata:\n\n";
+
+        // Basic metadata
+        metadataText += "Basic Information:\n";
+        for (const [key, value] of Object.entries(metadata.basic)) {
+          metadataText += `${formatKey(key)}: ${value}\n`;
+        }
+
+        // Image metadata
+        if (metadata.image) {
+          metadataText += "\nImage Information:\n";
+          for (const [key, value] of Object.entries(metadata.image)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Audio metadata
+        if (metadata.audio) {
+          metadataText += "\nAudio Information:\n";
+          for (const [key, value] of Object.entries(metadata.audio)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Video metadata
+        if (metadata.video) {
+          metadataText += "\nVideo Information:\n";
+          for (const [key, value] of Object.entries(metadata.video)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Text metadata
+        if (metadata.text) {
+          metadataText += "\nText Information:\n";
+          for (const [key, value] of Object.entries(metadata.text)) {
+            metadataText += `${formatKey(key)}: ${value}\n`;
+          }
+        }
+
+        // Create blob and download
+        const blob = new Blob([metadataText], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `metadata_School-tools-hub.vercel.app-${metadata.basic.name}.txt`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+
+        showToast("Metadata exported successfully!");
+      }
+
+      // Helper functions
+
+      // Format file size
+      function formatFileSize(bytes) {
+        if (bytes === 0) return "0 Bytes";
+
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+      }
+
+      // Format duration
+      function formatDuration(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+
+        let result = "";
+
+        if (hours > 0) {
+          result += hours + ":";
+          result += (minutes < 10 ? "0" : "") + minutes + ":";
+        } else {
+          result += minutes + ":";
+        }
+
+        result += (secs < 10 ? "0" : "") + secs;
+
+        return result;
+      }
+
+      // Format key for display
+      function formatKey(key) {
+        return key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase())
+          .replace(/No/g, "No ");
+      }
+
+      // Get file icon based on type
+      function getFileIcon(type) {
+        if (type.startsWith("image/")) {
+          return "🖼️";
+        } else if (type === "application/pdf") {
+          return "📄";
+        } else if (type.startsWith("audio/")) {
+          return "🎵";
+        } else if (type.startsWith("video/")) {
+          return "🎬";
+        } else if (type === "text/plain") {
+          return "📝";
+        } else if (type === "text/html") {
+          return "🌐";
+        } else if (type === "text/css" || type === "application/javascript") {
+          return "💻";
+        } else {
+          return "📁";
+        }
+      }
+
+      // Show toast message
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast";
+
+        if (type === "error") {
+          toast.classList.add("error");
+        }
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Typing Speed Test | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .test-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+        justify-content: center;
+      }
+
+      .option-btn {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+      }
+
+      .option-btn:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .option-btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .custom-text-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .custom-text-btn:hover {
+        border-color: var(--primary);
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .timer-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .timer {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+        background: var(--bg-dark);
+        padding: 10px 25px;
+        border-radius: 8px;
+        min-width: 150px;
+        text-align: center;
+      }
+
+      .typing-area {
+        position: relative;
+        margin-bottom: 30px;
+      }
+
+      .text-display {
+        background: var(--bg-dark);
+        padding: 20px;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        line-height: 1.8;
+        margin-bottom: 20px;
+        min-height: 150px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .text-display.active {
+        border: 1px solid var(--primary);
+      }
+
+      .character {
+        position: relative;
+      }
+
+      .character.correct {
+        color: var(--success);
+      }
+
+      .character.incorrect {
+        color: var(--danger);
+        text-decoration: underline;
+      }
+
+      .character.current {
+        background-color: rgba(88, 166, 255, 0.3);
+        border-radius: 2px;
+      }
+
+      .text-input {
+        width: 100%;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        resize: none;
+        height: 100px;
+      }
+
+      .text-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .text-input.disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .start-btn {
+        display: block;
+        margin: 0 auto;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 1.1rem;
+      }
+
+      .start-btn:hover {
+        background: var(--primary-hover);
+        transform: scale(1.05);
+      }
+
+      .start-btn.restart {
+        background: var(--warning);
+      }
+
+      .start-btn.restart:hover {
+        background: #d4a935;
+      }
+
+      .results-container {
+        margin-top: 30px;
+        display: none;
+      }
+
+      .results-title {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .result-card {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .result-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .result-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .result-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .share-results {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .share-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .share-btn:hover {
+        background: var(--primary-hover);
+      }
+
+      .leaderboard-container {
+        margin-top: 40px;
+      }
+
+      .leaderboard-title {
+        font-size: 1.3rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .leaderboard-table th {
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .leaderboard-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .rank-1 {
+        color: gold;
+        font-weight: 700;
+      }
+
+      .rank-2 {
+        color: silver;
+        font-weight: 600;
+      }
+
+      .rank-3 {
+        color: #cd7f32; /* bronze */
+        font-weight: 600;
+      }
+
+      .user-row {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        border: 1px solid var(--border);
+      }
+
+      .modal h2 {
+        margin-bottom: 20px;
+        color: var(--primary);
+      }
+
+      .modal-form-group {
+        margin-bottom: 15px;
+      }
+
+      .modal-form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-muted);
+      }
+
+      .modal-form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      .modal-form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .modal-buttons button {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .modal-save {
+        background: var(--primary);
+        color: white;
+      }
+
+      .modal-save:hover {
+        background: var(--primary-hover);
+      }
+
+      .modal-cancel {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+
+      .modal-cancel:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .username-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .username-modal-content {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        border: 1px solid var(--border);
+      }
+
+      .username-modal h2 {
+        margin-bottom: 20px;
+        color: var(--primary);
+      }
+
+      .username-form-group {
+        margin-bottom: 15px;
+      }
+
+      .username-form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-muted);
+      }
+
+      .username-form-group input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+      }
+
+      .username-form-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .username-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .username-buttons button {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .username-save {
+        background: var(--primary);
+        color: white;
+      }
+
+      .username-save:hover {
+        background: var(--primary-hover);
+      }
+
+      .username-cancel {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+
+      .username-cancel:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .text-display {
+          font-size: 1rem;
+          padding: 15px;
+        }
+
+        .timer {
+          font-size: 1.5rem;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .result-value {
+          font-size: 1.8rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .test-options {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .option-btn,
+        .custom-text-btn {
+          width: 100%;
+          text-align: center;
+          justify-content: center;
+        }
+
+        .text-display {
+          font-size: 0.9rem;
+          padding: 12px;
+        }
+
+        .timer {
+          font-size: 1.3rem;
+          padding: 8px 15px;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .result-value {
+          font-size: 1.5rem;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+          padding: 8px;
+          font-size: 0.9rem;
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home</a
+      >
+
+      <h1>Typing Speed Test</h1>
+      <p class="description"
+        >Measure your typing speed and accuracy with customizable texts.
+        Practice to improve your typing skills.</p
+      >
+
+      <div class="test-options">
+        <button class="option-btn active" data-difficulty="easy">Easy</button>
+        <button class="option-btn" data-difficulty="medium">Medium</button>
+        <button class="option-btn" data-difficulty="hard">Hard</button>
+        <button class="custom-text-btn" onclick="openCustomTextModal()">
+          <span>📝</span> Custom Text
+        </button>
+      </div>
+
+      <div class="timer-container">
+        <div class="timer" id="timer">1:00</div>
+      </div>
+
+      <div class="typing-area">
+        <div class="text-display" id="textDisplay"></div>
+        <textarea
+          class="text-input"
+          id="textInput"
+          placeholder="Click Start to begin the test. Type the text above here..."
+          disabled></textarea>
+      </div>
+
+      <button class="start-btn" id="startBtn" onclick="startTest()"
+        >Start Test</button
+      >
+
+      <div class="results-container" id="resultsContainer">
+        <h2 class="results-title">Your Results</h2>
+
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="result-value" id="wpmResult">0</div>
+            <div class="result-label">Words Per Minute</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-value" id="accuracyResult">0%</div>
+            <div class="result-label">Accuracy</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-value" id="correctCharsResult">0</div>
+            <div class="result-label">Correct Characters</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-value" id="incorrectCharsResult">0</div>
+            <div class="result-label">Incorrect Characters</div>
+          </div>
+        </div>
+
+        <div class="share-results">
+          <button class="share-btn" onclick="saveToLeaderboard()">
+            <span>🏆</span> Save to Leaderboard
+          </button>
+        </div>
+      </div>
+
+      <div class="leaderboard-container">
+        <h2 class="leaderboard-title">Leaderboard</h2>
+
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>WPM</th>
+              <th>Accuracy</th>
+              <th>Difficulty</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody">
+            <!-- Leaderboard entries will be populated here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Custom Text Modal -->
+      <div class="modal" id="customTextModal">
+        <div class="modal-content">
+          <h2>Custom Text</h2>
+          <div class="modal-form-group">
+            <label for="customText">Enter your custom text:</label>
+            <textarea
+              id="customText"
+              placeholder="Type or paste your text here..."></textarea>
+          </div>
+          <div class="modal-buttons">
+            <button class="modal-cancel" onclick="closeCustomTextModal()"
+              >Cancel</button
+            >
+            <button class="modal-save" onclick="setCustomText()"
+              >Use Text</button
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Username Modal -->
+      <div class="username-modal" id="usernameModal">
+        <div class="username-modal-content">
+          <h2>Save Your Score</h2>
+          <div class="username-form-group">
+            <label for="username">Enter your name:</label>
+            <input type="text" id="username" placeholder="Your name" />
+          </div>
+          <div class="username-buttons">
+            <button class="username-cancel" onclick="closeUsernameModal()"
+              >Cancel</button
+            >
+            <button class="username-save" onclick="submitScore()"
+              >Save Score</button
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Notification -->
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <script>
+      // Sample texts for different difficulty levels
+      const texts = {
+        easy: [
+          "The quick brown fox jumps over the lazy dog. This sentence contains all the letters in the English alphabet.",
+          "Learning to type quickly and accurately is an essential skill in today's digital world.",
+          "Practice makes perfect. The more you type, the better you will become at it.",
+          "Typing is like playing a musical instrument. It requires practice and muscle memory.",
+          "Good posture is important when typing. Keep your back straight and wrists elevated.",
+        ],
+        medium: [
+          "The ability to type without looking at the keyboard is called touch typing. It's a skill that can significantly increase your productivity and efficiency when using a computer.",
+          "Ergonomic keyboards are designed to minimize strain and reduce the risk of carpal tunnel syndrome. They position your hands, wrists, and arms at angles that are more natural than traditional keyboards.",
+          "The QWERTY keyboard layout was designed in the 1870s for mechanical typewriters. Despite being created to slow typists down (to prevent jamming), it remains the standard layout used today.",
+          "When learning to type, it's important to focus on accuracy before speed. Once you can type accurately without looking at the keyboard, your speed will naturally increase with practice.",
+          "Many professional typists can achieve speeds of over 100 words per minute. The world record for typing speed is over 200 words per minute, maintained for a sustained period.",
+        ],
+        hard: [
+          "The development of typing skills has become increasingly important in our technology-driven society. Proficient typing abilities can enhance productivity, facilitate communication, and provide a competitive advantage in academic and professional environments. Mastering this skill requires consistent practice, proper technique, and patience.",
+          "Quantum computing represents a paradigm shift in computational capabilities. Unlike classical computers that use bits (0s and 1s), quantum computers utilize quantum bits or qubits, which can exist in multiple states simultaneously due to the principles of superposition and entanglement. This property allows quantum computers to process complex calculations exponentially faster than their classical counterparts.",
+          "The biodiversity of tropical rainforests is unparalleled in the natural world. These ecosystems, covering less than 7% of Earth's land surface, harbor approximately 50% of all known plant and animal species. The intricate relationships between organisms in these forests have evolved over millions of years, creating a delicate balance that is increasingly threatened by human activities such as deforestation and climate change.",
+          "Artificial intelligence has transformed numerous industries through its ability to analyze vast amounts of data, recognize patterns, and make predictions with remarkable accuracy. Machine learning algorithms, a subset of AI, improve their performance over time without explicit programming, learning from experience much like humans do. This technology continues to evolve rapidly, raising both exciting possibilities and ethical considerations for society.",
+          "The human brain, with its approximately 86 billion neurons and countless synaptic connections, remains one of the most complex and fascinating structures in the known universe. Neuroscientists continue to unravel its mysteries, studying how this remarkable organ processes information, stores memories, generates consciousness, and adapts to changing circumstances throughout our lives.",
+        ],
+      };
+
+      // Variables for the typing test
+      let currentText = "";
+      let timer;
+      let timeLeft = 60; // 1 minute timer
+      let testActive = false;
+      let startTime;
+      let endTime;
+      let currentIndex = 0;
+      let correctChars = 0;
+      let incorrectChars = 0;
+      let currentDifficulty = "easy";
+      let leaderboard = [];
+      let username = "";
+
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Load saved data if available
+      document.addEventListener("DOMContentLoaded", function () {
+        loadSavedData();
+        updateThemeToggle();
+
+        // Set up difficulty buttons
+        const difficultyBtns = document.querySelectorAll(".option-btn");
+        difficultyBtns.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            difficultyBtns.forEach((b) => b.classList.remove("active"));
+            this.classList.add("active");
+            currentDifficulty = this.dataset.difficulty;
+            resetTest();
+            setRandomText();
+          });
+        });
+
+        // Set up text input
+        const textInput = document.getElementById("textInput");
+        textInput.addEventListener("input", checkInput);
+
+        // Set initial text
+        setRandomText();
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Load saved data
+      function loadSavedData() {
+        const savedLeaderboard = localStorage.getItem("typingLeaderboard");
+        if (savedLeaderboard) {
+          leaderboard = JSON.parse(savedLeaderboard);
+          updateLeaderboard();
+        }
+
+        const savedUsername = localStorage.getItem("typingUsername");
+        if (savedUsername) {
+          username = savedUsername;
+        }
+      }
+
+      // Save data to localStorage
+      function saveData() {
+        localStorage.setItem("typingLeaderboard", JSON.stringify(leaderboard));
+        if (username) {
+          localStorage.setItem("typingUsername", username);
+        }
+      }
+
+      // Set a random text based on difficulty
+      function setRandomText() {
+        const textArray = texts[currentDifficulty];
+        const randomIndex = Math.floor(Math.random() * textArray.length);
+        currentText = textArray[randomIndex];
+
+        displayText();
+      }
+
+      // Set custom text
+      function setCustomText() {
+        const customText = document.getElementById("customText").value.trim();
+
+        if (customText.length < 10) {
+          showToast(
+            "Text is too short. Please enter at least 10 characters.",
+            "error"
+          );
+          return;
+        }
+
+        currentText = customText;
+        currentDifficulty = "custom";
+
+        // Update difficulty buttons
+        const difficultyBtns = document.querySelectorAll(".option-btn");
+        difficultyBtns.forEach((btn) => btn.classList.remove("active"));
+
+        displayText();
+        closeCustomTextModal();
+        resetTest();
+      }
+
+      // Display the current text
+      function displayText() {
+        const textDisplay = document.getElementById("textDisplay");
+        textDisplay.innerHTML = "";
+
+        // Create a span for each character
+        currentText.split("").forEach((char, index) => {
+          const charSpan = document.createElement("span");
+          charSpan.textContent = char;
+          charSpan.className = "character";
+          textDisplay.appendChild(charSpan);
+        });
+      }
+
+      // Start the typing test
+      function startTest() {
+        if (testActive) return;
+
+        // Reset test
+        resetTest();
+
+        // Activate test
+        testActive = true;
+        startTime = new Date();
+
+        // Enable input
+        const textInput = document.getElementById("textInput");
+        textInput.disabled = false;
+        textInput.value = "";
+        textInput.focus();
+
+        // Highlight first character
+        const firstChar = document.querySelector(".character");
+        if (firstChar) firstChar.classList.add("current");
+
+        // Start timer
+        timer = setInterval(updateTimer, 1000);
+
+        // Update button
+        const startBtn = document.getElementById("startBtn");
+        startBtn.textContent = "Restart Test";
+        startBtn.classList.add("restart");
+        startBtn.onclick = resetTest;
+
+        // Add active class to text display
+        document.getElementById("textDisplay").classList.add("active");
+      }
+
+      // Update the timer
+      function updateTimer() {
+        timeLeft--;
+
+        // Format time
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById("timer").textContent = `${minutes}:${seconds
+          .toString()
+          .padStart(2, "0")}`;
+
+        // End test if time is up
+        if (timeLeft <= 0) {
+          endTest();
+        }
+      }
+
+      // Check input against the text
+      function checkInput() {
+        if (!testActive) return;
+
+        const textInput = document.getElementById("textInput");
+        const inputValue = textInput.value;
+        const characters = document.querySelectorAll(".character");
+
+        // Reset current character highlight
+        if (characters[currentIndex]) {
+          characters[currentIndex].classList.remove("current");
+        }
+
+        // Check each character
+        for (let i = 0; i < inputValue.length; i++) {
+          // If we've reached the end of the text
+          if (i >= currentText.length) {
+            endTest();
+            return;
+          }
+
+          const char = inputValue[i];
+          const charSpan = characters[i];
+
+          if (char === currentText[i]) {
+            charSpan.classList.add("correct");
+            charSpan.classList.remove("incorrect");
+            correctChars++;
+          } else {
+            charSpan.classList.add("incorrect");
+            charSpan.classList.remove("correct");
+            incorrectChars++;
+          }
+        }
+
+        // Highlight current character
+        currentIndex = inputValue.length;
+        if (currentIndex < characters.length) {
+          characters[currentIndex].classList.add("current");
+        }
+
+        // If user has typed the entire text
+        if (inputValue.length === currentText.length) {
+          endTest();
+        }
+      }
+
+      // End the typing test
+      function endTest() {
+        // Stop the timer
+        clearInterval(timer);
+        testActive = false;
+        endTime = new Date();
+
+        // Disable input
+        const textInput = document.getElementById("textInput");
+        textInput.disabled = true;
+
+        // Calculate results
+        const timeElapsed = (endTime - startTime) / 1000; // in seconds
+        const totalWords = currentText.split(" ").length;
+        const wpm = Math.round((totalWords / timeElapsed) * 60);
+        const totalChars = correctChars + incorrectChars;
+        const accuracy =
+          totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+
+        // Update results
+        document.getElementById("wpmResult").textContent = wpm;
+        document.getElementById("accuracyResult").textContent = accuracy + "%";
+        document.getElementById("correctCharsResult").textContent =
+          correctChars;
+        document.getElementById("incorrectCharsResult").textContent =
+          incorrectChars;
+
+        // Show results
+        document.getElementById("resultsContainer").style.display = "block";
+
+        // Update button
+        const startBtn = document.getElementById("startBtn");
+        startBtn.textContent = "Start New Test";
+        startBtn.classList.remove("restart");
+        startBtn.onclick = startTest;
+
+        // Remove active class from text display
+        document.getElementById("textDisplay").classList.remove("active");
+      }
+
+      // Reset the test
+      function resetTest() {
+        // Stop any active test
+        clearInterval(timer);
+        testActive = false;
+
+        // Reset variables
+        timeLeft = 60;
+        currentIndex = 0;
+        correctChars = 0;
+        incorrectChars = 0;
+
+        // Update timer display
+        document.getElementById("timer").textContent = "1:00";
+
+        // Reset input
+        const textInput = document.getElementById("textInput");
+        textInput.disabled = true;
+        textInput.value = "";
+
+        // Reset text display
+        displayText();
+
+        // Hide results
+        document.getElementById("resultsContainer").style.display = "none";
+
+        // Update button
+        const startBtn = document.getElementById("startBtn");
+        startBtn.textContent = "Start Test";
+        startBtn.classList.remove("restart");
+        startBtn.onclick = startTest;
+
+        // Remove active class from text display
+        document.getElementById("textDisplay").classList.remove("active");
+      }
+
+      // Open custom text modal
+      function openCustomTextModal() {
+        document.getElementById("customTextModal").style.display = "flex";
+      }
+
+      // Close custom text modal
+      function closeCustomTextModal() {
+        document.getElementById("customTextModal").style.display = "none";
+      }
+
+      // Open username modal
+      function saveToLeaderboard() {
+        if (username) {
+          submitScore();
+        } else {
+          document.getElementById("usernameModal").style.display = "flex";
+        }
+      }
+
+      // Close username modal
+      function closeUsernameModal() {
+        document.getElementById("usernameModal").style.display = "none";
+      }
+
+      // Submit score to leaderboard
+      function submitScore() {
+        // Get username if not already set
+        if (!username) {
+          username = document.getElementById("username").value.trim();
+          if (!username) {
+            showToast("Please enter your name.", "error");
+            return;
+          }
+        }
+
+        // Get results
+        const wpm = parseInt(document.getElementById("wpmResult").textContent);
+        const accuracy = parseInt(
+          document.getElementById("accuracyResult").textContent
+        );
+
+        // Create leaderboard entry
+        const entry = {
+          name: username,
+          wpm: wpm,
+          accuracy: accuracy,
+          difficulty: currentDifficulty,
+          date: new Date().toISOString(),
+        };
+
+        // Add to leaderboard
+        leaderboard.push(entry);
+
+        // Sort leaderboard by WPM (descending)
+        leaderboard.sort((a, b) => b.wpm - a.wpm);
+
+        // Limit to top 10
+        if (leaderboard.length > 10) {
+          leaderboard = leaderboard.slice(0, 10);
+        }
+
+        // Update leaderboard display
+        updateLeaderboard();
+
+        // Save data
+        saveData();
+
+        // Close modal and show toast
+        closeUsernameModal();
+        showToast("Score saved to leaderboard!");
+      }
+
+      // Update leaderboard display
+      function updateLeaderboard() {
+        const leaderboardBody = document.getElementById("leaderboardBody");
+        leaderboardBody.innerHTML = "";
+
+        if (leaderboard.length === 0) {
+          const emptyRow = document.createElement("tr");
+          const emptyCell = document.createElement("td");
+          emptyCell.colSpan = 5;
+          emptyCell.textContent =
+            "No entries yet. Be the first to join the leaderboard!";
+          emptyCell.style.textAlign = "center";
+          emptyCell.style.padding = "20px";
+          emptyRow.appendChild(emptyCell);
+          leaderboardBody.appendChild(emptyRow);
+          return;
+        }
+
+        leaderboard.forEach((entry, index) => {
+          const row = document.createElement("tr");
+
+          // Add user-row class if it's the current user
+          if (entry.name === username) {
+            row.classList.add("user-row");
+          }
+
+          // Rank
+          const rankCell = document.createElement("td");
+          rankCell.textContent = index + 1;
+
+          // Add special class for top 3
+          if (index === 0) rankCell.classList.add("rank-1");
+          if (index === 1) rankCell.classList.add("rank-2");
+          if (index === 2) rankCell.classList.add("rank-3");
+
+          row.appendChild(rankCell);
+
+          // Name
+          const nameCell = document.createElement("td");
+          nameCell.textContent = entry.name;
+          row.appendChild(nameCell);
+
+          // WPM
+          const wpmCell = document.createElement("td");
+          wpmCell.textContent = entry.wpm;
+          row.appendChild(wpmCell);
+
+          // Accuracy
+          const accuracyCell = document.createElement("td");
+          accuracyCell.textContent = entry.accuracy + "%";
+          row.appendChild(accuracyCell);
+
+          // Difficulty
+          const difficultyCell = document.createElement("td");
+          difficultyCell.textContent =
+            entry.difficulty.charAt(0).toUpperCase() +
+            entry.difficulty.slice(1);
+          row.appendChild(difficultyCell);
+
+          leaderboardBody.appendChild(row);
+        });
+      }
+
+      // Show toast notification
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast";
+
+        if (type === "error") {
+          toast.classList.add("error");
+        }
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Word & Character Counter | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .counter-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .textarea-container {
+        position: relative;
+      }
+
+      .text-input {
+        width: 100%;
+        min-height: 200px;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      .text-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px var(--shadow);
+      }
+
+      .clear-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(248, 81, 73, 0.2);
+        color: var(--danger);
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+      }
+
+      .clear-btn:hover {
+        background: rgba(248, 81, 73, 0.3);
+      }
+
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+      }
+
+      .stat-card {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .advanced-stats {
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .advanced-stats-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .reading-time {
+        text-align: center;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+
+      .reading-time-value {
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .keyword-density {
+        margin-top: 20px;
+      }
+
+      .keyword-title {
+        font-size: 1rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .keyword-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      .keyword-table th,
+      .keyword-table td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .keyword-table th {
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .grammar-suggestions {
+        margin-top: 20px;
+        background: var(--bg-dark);
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .grammar-title {
+        font-size: 1rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .grammar-list {
+        list-style-type: none;
+      }
+
+      .grammar-item {
+        margin-bottom: 8px;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      .grammar-item::before {
+        content: "⚠️";
+        position: absolute;
+        left: 0;
+      }
+
+      .no-issues {
+        color: var(--success);
+        text-align: center;
+        padding: 10px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .stats-container {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-value {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .stats-container {
+          grid-template-columns: 1fr;
+        }
+
+        .text-input {
+          padding: 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home</a
+      >
+
+      <h1>Word & Character Counter</h1>
+      <p class="description"
+        >Count words, characters, sentences, and paragraphs in your text with
+        real-time analysis.</p
+      >
+
+      <div class="counter-container">
+        <div class="textarea-container">
+          <textarea
+            class="text-input"
+            id="textInput"
+            placeholder="Type or paste your text here..."></textarea>
+          <button class="clear-btn" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-value" id="wordCount">0</div>
+            <div class="stat-label">Words</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value" id="charCount">0</div>
+            <div class="stat-label">Characters</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value" id="charNoSpaceCount">0</div>
+            <div class="stat-label">Characters (no spaces)</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value" id="sentenceCount">0</div>
+            <div class="stat-label">Sentences</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value" id="paragraphCount">0</div>
+            <div class="stat-label">Paragraphs</div>
+          </div>
+        </div>
+
+        <div class="advanced-stats">
+          <h3 class="advanced-stats-title">Advanced Analysis</h3>
+
+          <div class="reading-time">
+            Estimated reading time:
+            <span class="reading-time-value" id="readingTime">0 seconds</span>
+          </div>
+
+          <div class="keyword-density">
+            <h4 class="keyword-title">Keyword Density</h4>
+            <p>The most frequently used words in your text:</p>
+            <table class="keyword-table">
+              <thead>
+                <tr>
+                  <th>Word</th>
+                  <th>Count</th>
+                  <th>Percentage</th>
+                </tr>
+              </thead>
+              <tbody id="keywordTableBody">
+                <tr>
+                  <td colspan="3" style="text-align: center"
+                    >No keywords to display</td
+                  >
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grammar-suggestions">
+            <h4 class="grammar-title">Grammar Check Suggestions</h4>
+            <div id="grammarList">
+              <p class="no-issues">No issues detected.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <script>
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Get DOM elements
+      const textInput = document.getElementById("textInput");
+      const clearBtn = document.getElementById("clearBtn");
+      const wordCount = document.getElementById("wordCount");
+      const charCount = document.getElementById("charCount");
+      const charNoSpaceCount = document.getElementById("charNoSpaceCount");
+      const sentenceCount = document.getElementById("sentenceCount");
+      const paragraphCount = document.getElementById("paragraphCount");
+      const readingTime = document.getElementById("readingTime");
+      const keywordTableBody = document.getElementById("keywordTableBody");
+      const grammarList = document.getElementById("grammarList");
+
+      // Add event listeners
+      textInput.addEventListener("input", updateCounts);
+      clearBtn.addEventListener("click", clearText);
+
+      // Load saved text if available
+      document.addEventListener("DOMContentLoaded", function () {
+        const savedText = localStorage.getItem("wordCounterText");
+        if (savedText) {
+          textInput.value = savedText;
+          updateCounts();
+        }
+      });
+
+      // Update all counts
+      function updateCounts() {
+        const text = textInput.value;
+
+        // Save text to localStorage
+        localStorage.setItem("wordCounterText", text);
+
+        // Count words
+        const words = text.trim() ? text.trim().split(/\s+/) : [];
+        wordCount.textContent = words.length;
+
+        // Count characters
+        charCount.textContent = text.length;
+
+        // Count characters without spaces
+        charNoSpaceCount.textContent = text.replace(/\s/g, "").length;
+
+        // Count sentences
+        const sentences = text
+          .split(/[.!?]+/)
+          .filter((sentence) => sentence.trim().length > 0);
+        sentenceCount.textContent = sentences.length;
+
+        // Count paragraphs
+        const paragraphs = text
+          .split(/\n+/)
+          .filter((paragraph) => paragraph.trim().length > 0);
+        paragraphCount.textContent = paragraphs.length;
+
+        // Calculate reading time
+        calculateReadingTime(words.length);
+
+        // Calculate keyword density
+        calculateKeywordDensity(words);
+
+        // Check for grammar issues
+        checkGrammar(text);
+      }
+
+      // Calculate reading time
+      function calculateReadingTime(wordCount) {
+        // Average reading speed: 200-250 words per minute
+        const wordsPerMinute = 225;
+        const minutes = wordCount / wordsPerMinute;
+
+        let readingTimeText;
+        if (minutes < 1) {
+          const seconds = Math.ceil(minutes * 60);
+          readingTimeText = `${seconds} second${seconds !== 1 ? "s" : ""}`;
+        } else if (minutes < 60) {
+          const roundedMinutes = Math.floor(minutes);
+          const seconds = Math.ceil((minutes - roundedMinutes) * 60);
+
+          if (seconds === 0) {
+            readingTimeText = `${roundedMinutes} minute${
+              roundedMinutes !== 1 ? "s" : ""
+            }`;
+          } else {
+            readingTimeText = `${roundedMinutes} minute${
+              roundedMinutes !== 1 ? "s" : ""
+            } ${seconds} second${seconds !== 1 ? "s" : ""}`;
+          }
+        } else {
+          const hours = Math.floor(minutes / 60);
+          const remainingMinutes = Math.floor(minutes % 60);
+
+          if (remainingMinutes === 0) {
+            readingTimeText = `${hours} hour${hours !== 1 ? "s" : ""}`;
+          } else {
+            readingTimeText = `${hours} hour${
+              hours !== 1 ? "s" : ""
+            } ${remainingMinutes} minute${remainingMinutes !== 1 ? "s" : ""}`;
+          }
+        }
+
+        readingTime.textContent = readingTimeText;
+      }
+
+      // Calculate keyword density
+      function calculateKeywordDensity(words) {
+        // Convert all words to lowercase and remove common words and punctuation
+        const commonWords = [
+          "the",
+          "and",
+          "a",
+          "to",
+          "of",
+          "in",
+          "is",
+          "it",
+          "that",
+          "for",
+          "on",
+          "with",
+          "as",
+          "by",
+          "at",
+          "from",
+          "be",
+          "this",
+          "was",
+          "are",
+          "were",
+          "has",
+          "have",
+          "had",
+          "an",
+          "but",
+          "or",
+          "not",
+          "what",
+          "all",
+          "when",
+          "who",
+          "which",
+          "can",
+          "will",
+          "just",
+          "do",
+          "more",
+          "if",
+          "so",
+          "out",
+          "up",
+          "their",
+          "there",
+          "about",
+          "into",
+          "than",
+          "them",
+          "then",
+          "some",
+          "her",
+          "him",
+          "his",
+          "she",
+          "he",
+          "would",
+          "could",
+          "you",
+          "your",
+          "they",
+          "may",
+          "these",
+          "those",
+          "its",
+          "we",
+          "our",
+        ];
+
+        const filteredWords = words
+          .map((word) => word.toLowerCase().replace(/[^\w\s]|_/g, ""))
+          .filter((word) => word.length > 2 && !commonWords.includes(word));
+
+        // Count word occurrences
+        const wordCounts = {};
+        filteredWords.forEach((word) => {
+          wordCounts[word] = (wordCounts[word] || 0) + 1;
+        });
+
+        // Sort by count (descending)
+        const sortedWords = Object.entries(wordCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10); // Top 10 keywords
+
+        // Update table
+        if (sortedWords.length > 0) {
+          keywordTableBody.innerHTML = "";
+
+          sortedWords.forEach(([word, count]) => {
+            const percentage = ((count / filteredWords.length) * 100).toFixed(
+              1
+            );
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+          <td>${word}</td>
+          <td>${count}</td>
+          <td>${percentage}%</td>
+        `;
+
+            keywordTableBody.appendChild(row);
+          });
+        } else {
+          keywordTableBody.innerHTML =
+            '<tr><td colspan="3" style="text-align: center;">No keywords to display</td></tr>';
+        }
+      }
+
+      // Advanced grammar check
+      async function checkGrammar(text) {
+        if (!text.trim()) {
+          grammarList.innerHTML =
+            '<p class="no-issues">No issues detected.</p>';
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            "https://api.languagetool.org/v2/check",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: `text=${encodeURIComponent(text)}&language=en-US`,
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+
+          const issues = data.matches.map(
+            (match) =>
+              `${match.message} (${match.offset} - ${
+                match.offset + match.length
+              })`
+          );
+
+          // Check for repeated words
+          const repeatedWords = text.match(/\b(\w+)\s+\1\b/gi);
+          if (repeatedWords) {
+            issues.push(`Repeated words found: ${repeatedWords.join(", ")}`);
+          }
+
+          // Check for very long sentences (more than 40 words)
+          const sentences = text
+            .split(/[.!?]+/)
+            .filter((sentence) => sentence.trim().length > 0);
+          sentences.forEach((sentence, index) => {
+            const wordCount = sentence.trim().split(/\s+/).length;
+            if (wordCount > 40) {
+              issues.push(
+                `Sentence ${
+                  index + 1
+                } is very long (${wordCount} words). Consider breaking it up.`
+              );
+            }
+          });
+
+          // Check for passive voice (simplified check)
+          const passiveVoicePatterns = [
+            /\b(?:am|is|are|was|were|be|been|being)\s+\w+ed\b/gi,
+            /\b(?:has|have|had)\s+been\s+\w+ed\b/gi,
+          ];
+
+          if (passiveVoicePatterns.some((pattern) => pattern.test(text))) {
+            issues.push(
+              "Possible passive voice detected. Consider using active voice for clearer writing."
+            );
+          }
+
+          // Check for common spelling errors and typos (simplified)
+          const commonErrors = [
+            { error: /\bteh\b/gi, suggestion: "the" },
+            { error: /\badn\b/gi, suggestion: "and" },
+            { error: /\byoru\b/gi, suggestion: "your" },
+            { error: /\bthier\b/gi, suggestion: "their" },
+            { error: /\bwiht\b/gi, suggestion: "with" },
+            { error: /\bbecuase\b/gi, suggestion: "because" },
+            { error: /\balot\b/gi, suggestion: "a lot" },
+            { error: /\bseperate\b/gi, suggestion: "separate" },
+            { error: /\bdefinately\b/gi, suggestion: "definitely" },
+            { error: /\brecomend\b/gi, suggestion: "recommend" },
+          ];
+
+          commonErrors.forEach(({ error, suggestion }) => {
+            if (error.test(text)) {
+              issues.push(
+                `Possible spelling error: "${
+                  text.match(error)[0]
+                }" might be "${suggestion}"`
+              );
+            }
+          });
+
+          // Update grammar list
+          grammarList.innerHTML = issues.length
+            ? '<ul class="grammar-list">' +
+              issues
+                .map((issue) => `<li class="grammar-item">${issue}</li>`)
+                .join("") +
+              "</ul>"
+            : '<p class="no-issues">No issues detected.</p>';
+        } catch (error) {
+          grammarList.innerHTML =
+            '<p class="error-message">Error checking grammar. Please try again.</p>';
+          console.error("Grammar check failed:", error);
+        }
+      }
+
+      // Clear text
+      function clearText() {
+        if (confirm("Are you sure you want to clear all text?")) {
+          textInput.value = "";
+          localStorage.removeItem("wordCounterText");
+          updateCounts();
+        }
+      }
+
+      // Initial count update
+      updateCounts();
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

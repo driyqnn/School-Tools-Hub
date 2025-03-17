@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro Timer | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+        --work: #58a6ff;
+        --short-break: #56d364;
+        --long-break: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .timer-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+
+      .timer-modes {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .timer-mode-btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .timer-mode-btn.work {
+        background: rgba(88, 166, 255, 0.2);
+        color: var(--work);
+        border: 1px solid var(--work);
+      }
+
+      .timer-mode-btn.short-break {
+        background: rgba(86, 211, 100, 0.2);
+        color: var(--short-break);
+        border: 1px solid var(--short-break);
+      }
+
+      .timer-mode-btn.long-break {
+        background: rgba(227, 179, 65, 0.2);
+        color: var(--long-break);
+        border: 1px solid var(--long-break);
+      }
+
+      .timer-mode-btn.active {
+        background: var(--work);
+        color: white;
+      }
+
+      .timer-mode-btn.active.work {
+        background: var(--work);
+      }
+
+      .timer-mode-btn.active.short-break {
+        background: var(--short-break);
+      }
+
+      .timer-mode-btn.active.long-break {
+        background: var(--long-break);
+      }
+
+      .timer-display {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .timer-circle {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: var(--bg-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        border: 2px solid var(--border);
+      }
+
+      .timer-progress {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: conic-gradient(var(--work) 0%, transparent 0%);
+        transition: background 0.3s ease;
+      }
+
+      .timer-progress.work {
+        background: conic-gradient(
+          var(--work) var(--progress),
+          transparent var(--progress)
+        );
+      }
+
+      .timer-progress.short-break {
+        background: conic-gradient(
+          var(--short-break) var(--progress),
+          transparent var(--progress)
+        );
+      }
+
+      .timer-progress.long-break {
+        background: conic-gradient(
+          var(--long-break) var(--progress),
+          transparent var(--progress)
+        );
+      }
+
+      .timer-time {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--text-light);
+        z-index: 10;
+      }
+
+      .timer-controls {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .timer-btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .timer-btn.start {
+        background: var(--success);
+        color: white;
+      }
+
+      .timer-btn.pause {
+        background: var(--warning);
+        color: white;
+      }
+
+      .timer-btn.reset {
+        background: var(--danger);
+        color: white;
+      }
+
+      .timer-btn:hover {
+        opacity: 0.9;
+        transform: scale(1.05);
+      }
+
+      .timer-settings {
+        margin-top: 40px;
+        background: var(--bg-dark);
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+
+      .settings-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .settings-toggle {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      .settings-toggle:hover {
+        color: var(--primary);
+      }
+
+      .settings-content {
+        display: none;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 15px;
+      }
+
+      .settings-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .settings-group label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .settings-group input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+      }
+
+      .settings-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .settings-group select {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c9d1d9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        padding-right: 30px;
+      }
+
+      .settings-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .settings-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .settings-btn {
+        padding: 8px 15px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .settings-btn.save {
+        background: var(--primary);
+        color: white;
+      }
+
+      .settings-btn.reset {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+      }
+
+      .settings-btn:hover {
+        opacity: 0.9;
+      }
+
+      .sessions-container {
+        margin-top: 40px;
+      }
+
+      .sessions-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+
+      .sessions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 10px;
+      }
+
+      .session-box {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+        user-select: none;
+      }
+
+      .session-box.completed {
+        background: rgba(88, 166, 255, 0.2);
+        border-color: var(--work);
+        color: var(--work);
+      }
+
+      .session-box.current {
+        background: var(--work);
+        color: white;
+      }
+
+      .stats-container {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 20px;
+      }
+
+      .stat-box {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .stat-box:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .quote-container {
+        margin-top: 40px;
+        background: rgba(88, 166, 255, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        display: none;
+      }
+
+      .quote-text {
+        font-size: 1.1rem;
+        font-style: italic;
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+
+      .quote-author {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .notification.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+        --work: #0066cc;
+        --short-break: #28a745;
+        --long-break: #f1c40f;
+      }
+
+      @media (max-width: 768px) {
+        .timer-modes {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .timer-display {
+          width: 250px;
+          height: 250px;
+        }
+
+        .timer-time {
+          font-size: 3rem;
+        }
+
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .settings-content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .timer-display {
+          width: 200px;
+          height: 200px;
+        }
+
+        .timer-time {
+          font-size: 2.5rem;
+        }
+
+        .timer-btn {
+          padding: 10px 15px;
+          font-size: 0.9rem;
+        }
+
+        .settings-title {
+          font-size: 1.1rem;
+        }
+
+        .sessions-grid {
+          grid-template-rows: repeat(auto-fill, minmax(40px, 1fr));
+        }
+
+        .session-box {
+          font-size: 0.8rem;
+        }
+
+        .stat-value {
+          font-size: 1.5rem;
+        }
+
+        .stat-label {
+          font-size: 0.8rem;
+        }
+
+        .container {
+          padding: 15px;
+          margin: 20px auto;
+        }
+
+        .stats-container {
+          grid-template-rows: 1fr;
+          gap: 15px;
+        }
+      }
+
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .timer-modes {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .timer-display {
+          width: 280px;
+          height: 280px;
+        }
+
+        .stats-container {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 80px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability-checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <div class="container">
+      <a href="../index.html" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home</a
+      >
+
+      <h1>Pomodoro Timer</h1>
+      <p class="description"
+        >Boost your productivity with focused work sessions and regular
+        breaks.</p
+      >
+
+      <div class="timer-container">
+        <div class="timer-modes">
+          <button
+            class="timer-mode-btn work active"
+            onclick="setTimerMode('work')"
+            >Work</button
+          >
+          <button
+            class="timer-mode-btn short-break"
+            onclick="setTimerMode('shortBreak')"
+            >Short Break</button
+          >
+          <button
+            class="timer-mode-btn long-break"
+            onclick="setTimerMode('longBreak')"
+            >Long Break</button
+          >
+        </div>
+
+        <div class="timer-display">
+          <div class="timer-progress work" id="timerProgress"></div>
+          <div class="timer-circle">
+            <div class="timer-time" id="timerTime">25:00</div>
+          </div>
+        </div>
+
+        <div class="timer-controls">
+          <button class="timer-btn reset" onclick="resetTimer()">
+            <span>↻</span> Reset
+          </button>
+          <button class="timer-btn start" id="startBtn" onclick="startTimer()">
+            <span>▶</span> Start
+          </button>
+        </div>
+
+        <div class="timer-settings">
+          <div class="settings-title">
+            <span>Timer Settings</span>
+            <button
+              class="settings-toggle"
+              id="settingsToggle"
+              onclick="toggleSettings()"
+              >▼</button
+            >
+          </div>
+
+          <div class="settings-content" id="settingsContent">
+            <div class="settings-group">
+              <label for="workTime">Work Time (minutes)</label>
+              <input type="number" id="workTime" min="1" max="60" value="25" />
+            </div>
+
+            <div class="settings-group">
+              <label for="shortBreakTime">Short Break (minutes)</label>
+              <input
+                type="number"
+                id="shortBreakTime"
+                min="1"
+                max="30"
+                value="5" />
+            </div>
+
+            <div class="settings-group">
+              <label for="longBreakTime">Long Break (minutes)</label>
+              <input
+                type="number"
+                id="longBreakTime"
+                min="1"
+                max="60"
+                value="15" />
+            </div>
+
+            <div class="settings-group">
+              <label for="sessionsBeforeLongBreak"
+                >Sessions Before Long Break</label
+              >
+              <input
+                type="number"
+                id="sessionsBeforeLongBreak"
+                min="1"
+                max="10"
+                value="4" />
+            </div>
+
+            <div class="settings-group">
+              <label for="autoStartBreaks">Auto-start Breaks</label>
+              <select id="autoStartBreaks">
+                <option value="true">Yes</option>
+                <option value="false" selected>No</option>
+              </select>
+            </div>
+
+            <div class="settings-group">
+              <label for="autoStartPomodoros">Auto-start Work Sessions</label>
+              <select id="autoStartPomodoros">
+                <option value="true">Yes</option>
+                <option value="false" selected>No</option>
+              </select>
+            </div>
+
+            <div class="settings-group">
+              <label for="soundEnabled">Sound Notifications</label>
+              <select id="soundEnabled">
+                <option value="true" selected>Enabled</option>
+                <option value="false">Disabled</option>
+              </select>
+            </div>
+
+            <div class="settings-actions">
+              <button class="settings-btn save" onclick="saveSettings()"
+                >Save Settings</button
+              >
+              <button class="settings-btn reset" onclick="resetSettings()"
+                >Reset to Default</button
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="sessions-container">
+          <h3 class="sessions-title"
+            >Today's Sessions
+            <span style="font-size: 0.8rem; color: var(--text-muted)"
+              >(Visual tracker only)</span
+            ></h3
+          >
+          <div class="sessions-grid" id="sessionsGrid">
+            <!-- Session boxes will be generated here -->
+          </div>
+        </div>
+
+        <div class="stats-container">
+          <div class="stat-box">
+            <div class="stat-value" id="todaySessions">0</div>
+            <div class="stat-label">Sessions Today</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-value" id="todayMinutes">0</div>
+            <div class="stat-label">Minutes Focused</div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-value" id="weekSessions">0</div>
+            <div class="stat-label">Sessions This Week</div>
+          </div>
+        </div>
+
+        <div class="quote-container" id="quoteContainer">
+          <div class="quote-text" id="quoteText"
+            >"The secret of getting ahead is getting started."</div
+          >
+          <div class="quote-author" id="quoteAuthor">— Mark Twain</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notification" id="notification">Timer completed!</div>
+
+    <footer>
+      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
+    </footer>
+
+    <audio
+      id="alarmSound"
+      src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"
+      preload="auto"></audio>
+
+    <script>
+      // Timer settings and state
+      let settings = {
+        workTime: 25,
+        shortBreakTime: 5,
+        longBreakTime: 15,
+        sessionsBeforeLongBreak: 4,
+        autoStartBreaks: false,
+        autoStartPomodoros: false,
+        soundEnabled: true,
+      };
+
+      let timerState = {
+        mode: "work", // 'work', 'shortBreak', 'longBreak'
+        timeLeft: 25 * 60, // in seconds
+        totalTime: 25 * 60,
+        isRunning: false,
+        interval: null,
+        completedSessions: 0,
+        currentSession: 1,
+        todayMinutes: 0,
+      };
+
+      // Stats
+      let stats = {
+        todaySessions: 0,
+        todayMinutes: 0,
+        weekSessions: 0,
+        lastActiveDate: null,
+      };
+
+      // Quotes for break time
+      const quotes = [
+        {
+          text: "The secret of getting ahead is getting started.",
+          author: "Mark Twain",
+        },
+        {
+          text: "It always seems impossible until it's done.",
+          author: "Nelson Mandela",
+        },
+        {
+          text: "Don't watch the clock; do what it does. Keep going.",
+          author: "Sam Levenson",
+        },
+        {
+          text: "The way to get started is to quit talking and begin doing.",
+          author: "Walt Disney",
+        },
+        {
+          text: "It does not matter how slowly you go as long as you do not stop.",
+          author: "Confucius",
+        },
+        {
+          text: "Believe you can and you're halfway there.",
+          author: "Theodore Roosevelt",
+        },
+        { text: "Quality is not an act, it is a habit.", author: "Aristotle" },
+        {
+          text: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+          author: "Winston Churchill",
+        },
+        {
+          text: "The future depends on what you do today.",
+          author: "Mahatma Gandhi",
+        },
+        {
+          text: "You don't have to be great to start, but you have to start to be great.",
+          author: "Zig Ziglar",
+        },
+      ];
+
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Load saved data if available
+      document.addEventListener("DOMContentLoaded", function () {
+        loadSavedData();
+        updateTimerDisplay();
+        updateSessionsGrid();
+        updateStats();
+        updateThemeToggle();
+
+        // Request notification permission
+        if (
+          Notification.permission !== "granted" &&
+          Notification.permission !== "denied"
+        ) {
+          Notification.requestPermission();
+        }
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+      // Load saved data
+      function loadSavedData() {
+        const savedSettings = localStorage.getItem("pomodoroSettings");
+        if (savedSettings) {
+          settings = JSON.parse(savedSettings);
+
+          // Update settings form
+          document.getElementById("workTime").value = settings.workTime;
+          document.getElementById("shortBreakTime").value =
+            settings.shortBreakTime;
+          document.getElementById("longBreakTime").value =
+            settings.longBreakTime;
+          document.getElementById("sessionsBeforeLongBreak").value =
+            settings.sessionsBeforeLongBreak;
+          document.getElementById("autoStartBreaks").value =
+            settings.autoStartBreaks.toString();
+          document.getElementById("autoStartPomodoros").value =
+            settings.autoStartPomodoros.toString();
+          document.getElementById("soundEnabled").value =
+            settings.soundEnabled.toString();
+        }
+
+        const savedStats = localStorage.getItem("pomodoroStats");
+        if (savedStats) {
+          stats = JSON.parse(savedStats);
+
+          // Check if it's a new day
+          const today = new Date().toDateString();
+          if (stats.lastActiveDate !== today) {
+            stats.todaySessions = 0;
+            stats.todayMinutes = 0;
+            stats.lastActiveDate = today;
+          }
+        } else {
+          stats.lastActiveDate = new Date().toDateString();
+        }
+
+        // Initialize timer state based on settings
+        timerState.timeLeft = settings.workTime * 60;
+        timerState.totalTime = settings.workTime * 60;
+      }
+
+      // Save data to localStorage
+      function saveData() {
+        localStorage.setItem("pomodoroSettings", JSON.stringify(settings));
+        localStorage.setItem("pomodoroStats", JSON.stringify(stats));
+      }
+
+      // Toggle settings panel
+      function toggleSettings() {
+        const settingsContent = document.getElementById("settingsContent");
+        const settingsToggle = document.getElementById("settingsToggle");
+
+        if (settingsContent.style.display === "grid") {
+          settingsContent.style.display = "none";
+          settingsToggle.textContent = "▼";
+        } else {
+          settingsContent.style.display = "grid";
+          settingsToggle.textContent = "▲";
+        }
+      }
+
+      // Save settings
+      function saveSettings() {
+        settings.workTime =
+          parseInt(document.getElementById("workTime").value) || 25;
+        settings.shortBreakTime =
+          parseInt(document.getElementById("shortBreakTime").value) || 5;
+        settings.longBreakTime =
+          parseInt(document.getElementById("longBreakTime").value) || 15;
+        settings.sessionsBeforeLongBreak =
+          parseInt(document.getElementById("sessionsBeforeLongBreak").value) ||
+          4;
+        settings.autoStartBreaks =
+          document.getElementById("autoStartBreaks").value === "true";
+        settings.autoStartPomodoros =
+          document.getElementById("autoStartPomodoros").value === "true";
+        settings.soundEnabled =
+          document.getElementById("soundEnabled").value === "true";
+
+        // Validate settings
+        settings.workTime = Math.min(Math.max(settings.workTime, 1), 60);
+        settings.shortBreakTime = Math.min(
+          Math.max(settings.shortBreakTime, 1),
+          30
+        );
+        settings.longBreakTime = Math.min(
+          Math.max(settings.longBreakTime, 1),
+          60
+        );
+        settings.sessionsBeforeLongBreak = Math.min(
+          Math.max(settings.sessionsBeforeLongBreak, 1),
+          10
+        );
+
+        // Update form with validated values
+        document.getElementById("workTime").value = settings.workTime;
+        document.getElementById("shortBreakTime").value =
+          settings.shortBreakTime;
+        document.getElementById("longBreakTime").value = settings.longBreakTime;
+        document.getElementById("sessionsBeforeLongBreak").value =
+          settings.sessionsBeforeLongBreak;
+
+        // Reset timer if it's not running
+        if (!timerState.isRunning) {
+          resetTimer();
+        }
+
+        // Save settings
+        saveData();
+
+        // Update sessions grid
+        updateSessionsGrid();
+
+        // Close settings panel
+        toggleSettings();
+
+        // Show notification
+        showNotification("Settings saved successfully!");
+      }
+
+      // Reset settings to default
+      function resetSettings() {
+        if (
+          confirm("Are you sure you want to reset all settings to default?")
+        ) {
+          settings = {
+            workTime: 25,
+            shortBreakTime: 5,
+            longBreakTime: 15,
+            sessionsBeforeLongBreak: 4,
+            autoStartBreaks: false,
+            autoStartPomodoros: false,
+            soundEnabled: true,
+          };
+
+          // Update settings form
+          document.getElementById("workTime").value = settings.workTime;
+          document.getElementById("shortBreakTime").value =
+            settings.shortBreakTime;
+          document.getElementById("longBreakTime").value =
+            settings.longBreakTime;
+          document.getElementById("sessionsBeforeLongBreak").value =
+            settings.sessionsBeforeLongBreak;
+          document.getElementById("autoStartBreaks").value =
+            settings.autoStartBreaks.toString();
+          document.getElementById("autoStartPomodoros").value =
+            settings.autoStartPomodoros.toString();
+          document.getElementById("soundEnabled").value =
+            settings.soundEnabled.toString();
+
+          // Reset timer
+          resetTimer();
+
+          // Save settings
+          saveData();
+
+          // Update sessions grid
+          updateSessionsGrid();
+
+          // Show notification
+          showNotification("Settings reset to default!");
+        }
+      }
+
+      // Set timer mode
+      function setTimerMode(mode) {
+        // Don't change mode if timer is running
+        if (timerState.isRunning) {
+          showNotification("Stop the timer before changing modes!", "warning");
+          return;
+        }
+
+        timerState.mode = mode;
+
+        // Update mode buttons
+        const modeButtons = document.querySelectorAll(".timer-mode-btn");
+        modeButtons.forEach((btn) => btn.classList.remove("active"));
+
+        if (mode === "work") {
+          document
+            .querySelector(".timer-mode-btn.work")
+            .classList.add("active");
+          timerState.timeLeft = settings.workTime * 60;
+          timerState.totalTime = settings.workTime * 60;
+        } else if (mode === "shortBreak") {
+          document
+            .querySelector(".timer-mode-btn.short-break")
+            .classList.add("active");
+          timerState.timeLeft = settings.shortBreakTime * 60;
+          timerState.totalTime = settings.shortBreakTime * 60;
+        } else if (mode === "longBreak") {
+          document
+            .querySelector(".timer-mode-btn.long-break")
+            .classList.add("active");
+          timerState.timeLeft = settings.longBreakTime * 60;
+          timerState.totalTime = settings.longBreakTime * 60;
+        }
+
+        // Update timer display
+        updateTimerDisplay();
+
+        // Update progress circle
+        updateProgressCircle();
+      }
+
+      // Start timer
+      function startTimer() {
+        if (timerState.isRunning) {
+          pauseTimer();
+          return;
+        }
+
+        timerState.isRunning = true;
+
+        // Update button text
+        const startBtn = document.getElementById("startBtn");
+        startBtn.innerHTML = "<span>⏸</span> Pause";
+        startBtn.classList.remove("start");
+        startBtn.classList.add("pause");
+
+        // Hide quote during work sessions
+        if (timerState.mode === "work") {
+          document.getElementById("quoteContainer").style.display = "none";
+        }
+
+        // Start interval
+        timerState.interval = setInterval(updateTimer, 1000);
+      }
+
+      // Pause timer
+      function pauseTimer() {
+        timerState.isRunning = false;
+
+        // Clear interval
+        clearInterval(timerState.interval);
+
+        // Update button text
+        const startBtn = document.getElementById("startBtn");
+        startBtn.innerHTML = "<span>▶</span> Resume";
+        startBtn.classList.remove("pause");
+        startBtn.classList.add("start");
+      }
+
+      // Reset timer
+      function resetTimer() {
+        // Clear interval if running
+        if (timerState.isRunning) {
+          clearInterval(timerState.interval);
+          timerState.isRunning = false;
+        }
+
+        // Reset time based on current mode
+        if (timerState.mode === "work") {
+          timerState.timeLeft = settings.workTime * 60;
+          timerState.totalTime = settings.workTime * 60;
+        } else if (timerState.mode === "shortBreak") {
+          timerState.timeLeft = settings.shortBreakTime * 60;
+          timerState.totalTime = settings.shortBreakTime * 60;
+        } else if (timerState.mode === "longBreak") {
+          timerState.timeLeft = settings.longBreakTime * 60;
+          timerState.totalTime = settings.longBreakTime * 60;
+        }
+
+        // Update button text
+        const startBtn = document.getElementById("startBtn");
+        startBtn.innerHTML = "<span>▶</span> Start";
+        startBtn.classList.remove("pause");
+        startBtn.classList.add("start");
+
+        // Update timer display
+        updateTimerDisplay();
+
+        // Update progress circle
+        updateProgressCircle();
+
+        // Hide quote
+        document.getElementById("quoteContainer").style.display = "none";
+      }
+
+      // Update timer
+      function updateTimer() {
+        if (timerState.timeLeft > 0) {
+          timerState.timeLeft--;
+          updateTimerDisplay();
+          updateProgressCircle();
+        } else {
+          // Timer completed
+          timerCompleted();
+        }
+      }
+
+      // Timer completed
+      function timerCompleted() {
+        // Clear interval
+        clearInterval(timerState.interval);
+        timerState.isRunning = false;
+
+        // Play sound if enabled
+        if (settings.soundEnabled) {
+          const alarmSound = document.getElementById("alarmSound");
+          alarmSound.play();
+        }
+
+        // Show notification
+        if (timerState.mode === "work") {
+          showNotification("Work session completed! Time for a break.");
+          showDesktopNotification(
+            "Work session completed!",
+            "Time for a break."
+          );
+
+          // Update stats
+          stats.todaySessions++;
+          stats.weekSessions++;
+          stats.todayMinutes += settings.workTime;
+          timerState.completedSessions++;
+
+          // Update sessions grid
+          updateSessionsGrid();
+
+          // Update stats display
+          updateStats();
+
+          // Save stats
+          saveData();
+
+          // Determine next break type
+          if (
+            timerState.completedSessions % settings.sessionsBeforeLongBreak ===
+            0
+          ) {
+            // Time for a long break
+            timerState.mode = "longBreak";
+            timerState.timeLeft = settings.longBreakTime * 60;
+            timerState.totalTime = settings.longBreakTime * 60;
+
+            // Update mode buttons
+            const modeButtons = document.querySelectorAll(".timer-mode-btn");
+            modeButtons.forEach((btn) => btn.classList.remove("active"));
+            document
+              .querySelector(".timer-mode-btn.long-break")
+              .classList.add("active");
+          } else {
+            // Time for a short break
+            timerState.mode = "shortBreak";
+            timerState.timeLeft = settings.shortBreakTime * 60;
+            timerState.totalTime = settings.shortBreakTime * 60;
+
+            // Update mode buttons
+            const modeButtons = document.querySelectorAll(".timer-mode-btn");
+            modeButtons.forEach((btn) => btn.classList.remove("active"));
+            document
+              .querySelector(".timer-mode-btn.short-break")
+              .classList.add("active");
+          }
+
+          // Show a random motivational quote during break
+          showRandomQuote();
+
+          // Auto-start break if enabled
+          if (settings.autoStartBreaks) {
+            setTimeout(() => {
+              startTimer();
+            }, 1000);
+          }
+        } else {
+          // Break completed
+          showNotification("Break completed! Ready to work?");
+          showDesktopNotification("Break completed!", "Ready to work?");
+
+          // Back to work mode
+          timerState.mode = "work";
+          timerState.timeLeft = settings.workTime * 60;
+          timerState.totalTime = settings.workTime * 60;
+
+          // Update mode buttons
+          const modeButtons = document.querySelectorAll(".timer-mode-btn");
+          modeButtons.forEach((btn) => btn.classList.remove("active"));
+          document
+            .querySelector(".timer-mode-btn.work")
+            .classList.add("active");
+
+          // Hide quote
+          document.getElementById("quoteContainer").style.display = "none";
+
+          // Auto-start work session if enabled
+          if (settings.autoStartPomodoros) {
+            setTimeout(() => {
+              startTimer();
+            }, 1000);
+          }
+        }
+
+        // Update button text
+        const startBtn = document.getElementById("startBtn");
+        startBtn.innerHTML = "<span>▶</span> Start";
+        startBtn.classList.remove("pause");
+        startBtn.classList.add("start");
+
+        // Update timer display
+        updateTimerDisplay();
+
+        // Update progress circle
+        updateProgressCircle();
+      }
+
+      // Update timer display
+      function updateTimerDisplay() {
+        const minutes = Math.floor(timerState.timeLeft / 60);
+        const seconds = timerState.timeLeft % 60;
+
+        document.getElementById("timerTime").textContent = `${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+        // Update document title
+        document.title = `${minutes.toString().padStart(2, "0")}:${seconds
+          .toString()
+          .padStart(2, "0")} - Pomodoro Timer`;
+      }
+
+      // Update progress circle
+      function updateProgressCircle() {
+        const progress =
+          ((timerState.totalTime - timerState.timeLeft) /
+            timerState.totalTime) *
+          100;
+        const progressCircle = document.getElementById("timerProgress");
+
+        progressCircle.style.setProperty("--progress", `${progress}%`);
+
+        // Update class based on mode
+        progressCircle.className = "timer-progress";
+        if (timerState.mode === "work") {
+          progressCircle.classList.add("work");
+        } else if (timerState.mode === "shortBreak") {
+          progressCircle.classList.add("short-break");
+        } else if (timerState.mode === "longBreak") {
+          progressCircle.classList.add("long-break");
+        }
+      }
+
+      // Update sessions grid
+      function updateSessionsGrid() {
+        const sessionsGrid = document.getElementById("sessionsGrid");
+        sessionsGrid.innerHTML = "";
+
+        const totalSessions = settings.sessionsBeforeLongBreak * 3; // Show 3 sets
+
+        for (let i = 1; i <= totalSessions; i++) {
+          const sessionBox = document.createElement("div");
+          sessionBox.className = "session-box";
+
+          if (i < timerState.currentSession) {
+            sessionBox.classList.add("completed");
+          } else if (i === timerState.currentSession) {
+            sessionBox.classList.add("current");
+          }
+
+          sessionBox.textContent = i;
+          sessionsGrid.appendChild(sessionBox);
+        }
+      }
+
+      // Update stats display
+      function updateStats() {
+        document.getElementById("todaySessions").textContent =
+          stats.todaySessions;
+        document.getElementById("todayMinutes").textContent =
+          stats.todayMinutes;
+        document.getElementById("weekSessions").textContent =
+          stats.weekSessions;
+      }
+
+      // Show random quote
+      function showRandomQuote() {
+        const quoteContainer = document.getElementById("quoteContainer");
+        const quoteText = document.getElementById("quoteText");
+        const quoteAuthor = document.getElementById("quoteAuthor");
+
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+        quoteText.textContent = `"${randomQuote.text}"`;
+        quoteAuthor.textContent = `— ${randomQuote.author}`;
+
+        quoteContainer.style.display = "block";
+      }
+
+      // Show notification
+      function showNotification(message, type = "success") {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.className = "notification";
+
+        if (type === "warning") {
+          notification.style.background = "var(--warning)";
+        } else if (type === "error") {
+          notification.style.background = "var(--danger)";
+        } else {
+          notification.style.background = "var(--success)";
+        }
+
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      // Show desktop notification
+      function showDesktopNotification(title, body) {
+        if (Notification.permission === "granted") {
+          const notification = new Notification(title, {
+            body: body,
+            icon: "/favicon.ico",
+          });
+
+          // Close notification after 5 seconds
+          setTimeout(() => {
+            notification.close();
+          }, 5000);
+        }
+      }
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+  </body>
+</html>

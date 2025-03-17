@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Physics Calculator | School Tools Hub</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 20px;
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        flex-grow: 1;
+        position: relative;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--primary);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+      }
+
+      .description {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      /* Physics Calculator Specific Styles */
+      .calculator-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 20px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .calculator-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+      }
+
+      .calculator-tab.active {
+        border-bottom: 2px solid var(--primary);
+        color: var(--primary);
+        font-weight: 500;
+      }
+
+      .calculator-tab:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .calculator-content {
+        display: none;
+      }
+
+      .calculator-content.active {
+        display: block;
+      }
+
+      .formula-card {
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .formula-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .formula-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .formula-equation {
+        font-family: "Courier New", monospace;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        overflow-x: auto;
+      }
+
+      .formula-description {
+        color: var(--text-muted);
+        margin-bottom: 15px;
+        line-height: 1.5;
+      }
+
+      .calculator-form {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--text-light);
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .form-row .form-group {
+        flex: 1;
+        margin-bottom: 0;
+      }
+
+      .calculate-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .calculate-btn:hover {
+        background: var(--primary-hover);
+      }
+
+      .result {
+        margin-top: 15px;
+        padding: 15px;
+        background: rgba(88, 166, 255, 0.1);
+        border-radius: 4px;
+        border-left: 3px solid var(--primary);
+      }
+
+      .result-title {
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+
+      .result-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 80px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+          margin: 20px auto;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .description {
+          font-size: 0.9rem;
+        }
+
+        .calculator-tabs {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding-bottom: 5px;
+        }
+
+        .calculator-tab {
+          padding: 8px 15px;
+          font-size: 0.9rem;
+          white-space: nowrap;
+        }
+
+        .form-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+          margin: 10px auto;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+          margin-top: 20px;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+
+      :root {
+        --primary: #58a6ff;
+        --primary-hover: #1f6feb;
+        --bg-dark: #0d1117;
+        --bg-card: #161b22;
+        --text-light: #c9d1d9;
+        --text-muted: #8b949e;
+        --border: #30363d;
+        --shadow: rgba(88, 166, 255, 0.2);
+        --danger: #f85149;
+        --success: #56d364;
+        --warning: #e3b341;
+      }
+
+      /* Hamburger Menu Styles */
+      .hamburger-menu {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-menu:hover {
+        border-color: var(--primary);
+      }
+
+      .hamburger-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+      }
+
+      .hamburger-icon span {
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: var(--text-light);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: all 0.3s ease;
+      }
+
+      .hamburger-icon span:nth-child(1) {
+        top: 6px;
+      }
+
+      .hamburger-icon span:nth-child(2),
+      .hamburger-icon span:nth-child(3) {
+        top: 12px;
+      }
+
+      .hamburger-icon span:nth-child(4) {
+        top: 18px;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(1),
+      .hamburger-menu.open .hamburger-icon span:nth-child(4) {
+        width: 0%;
+        left: 50%;
+        opacity: 0;
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(2) {
+        transform: rotate(45deg);
+      }
+
+      .hamburger-menu.open .hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+      }
+
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        padding: 50px 20px 20px;
+      }
+
+      .nav-menu.open {
+        left: 0;
+      }
+
+      .nav-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-menu-title {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-menu-list {
+        list-style-type: none;
+      }
+
+      .nav-menu-item {
+        margin-bottom: 10px;
+      }
+
+      .nav-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-menu-link:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+
+      .nav-menu-link.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+      }
+
+      .toast-message {
+        flex: 1;
+      }
+
+      .toast-close {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+
+      .toast-close:hover {
+        opacity: 1;
+      }
+
+      /* Footer Styles */
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .social-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--primary);
+      }
+
+      /* Light theme */
+      body.light-theme {
+        --primary: #0066cc;
+        --primary-hover: #0052a3;
+        --bg-dark: #f5f8fa;
+        --bg-card: #ffffff;
+        --text-light: #24292e;
+        --text-muted: #586069;
+        --border: #e1e4e8;
+        --shadow: rgba(0, 102, 204, 0.2);
+        --danger: #d73a49;
+        --success: #28a745;
+        --warning: #f1c40f;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .hamburger-menu {
+          top: 15px;
+          left: 15px;
+        }
+
+        .theme-toggle {
+          top: 15px;
+          right: 15px;
+          padding: 6px 10px;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hamburger-menu {
+          top: 10px;
+          left: 10px;
+          width: 35px;
+          height: 35px;
+        }
+
+        .theme-toggle {
+          top: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 0.8rem;
+        }
+
+        .nav-menu {
+          width: 250px;
+          left: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+      <div class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu" id="navMenu">
+      <h2 class="nav-menu-title">School Tools Hub</h2>
+      <ul class="nav-menu-list">
+        <li class="nav-menu-item">
+          <a href="gwa_calculator.html" class="nav-menu-link">
+            <span>GWA Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="general_average_counter.html" class="nav-menu-link">
+            <span>General Average</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="pomodoro_timer.html" class="nav-menu-link">
+            <span>Pomodoro Timer</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="unit_converter.html" class="nav-menu-link">
+            <span>Unit Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="dictionary.html" class="nav-menu-link">
+            <span>Dictionary</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="word_counter.html" class="nav-menu-link">
+            <span>Word Counter</span>
+          </a>
+        </li>
+
+        <li class="nav-menu-item">
+          <a href="typing_test.html" class="nav-menu-link">
+            <span>Typing Test</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="readability_checker.html" class="nav-menu-link">
+            <span>Readability Checker</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="citation_generator.html" class="nav-menu-link">
+            <span>Citation Generator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="text_case_converter.html" class="nav-menu-link">
+            <span>Text Case Converter</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="physics_calculator.html" class="nav-menu-link">
+            <span>Physics Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="bmi_calculator.html" class="nav-menu-link">
+            <span>BMI Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="statistical_calculator.html" class="nav-menu-link">
+            <span>Statistical Calculator</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="trigonometry_solver.html" class="nav-menu-link">
+            <span>Trigonometry Solver</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="data_sorting.html" class="nav-menu-link">
+            <span>Data Sorting</span>
+          </a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="metadata_viewer.html" class="nav-menu-link">
+            <span>Metadata Viewer</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <div class="nav-menu-overlay" id="navMenuOverlay"></div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+
+    <!-- Main Container -->
+    <div class="container">
+      <a href="../index.html" class="back-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          color="#d3d3d3"
+          fill="none">
+          <path
+            d="M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Home
+      </a>
+
+      <h1>Physics Calculator</h1>
+      <p class="description">
+        Calculate physics formulas with ease. Select a category and enter values
+        to get instant results.
+      </p>
+
+      <div class="calculator-tabs">
+        <div class="calculator-tab active" data-tab="mechanics">Mechanics</div>
+        <div class="calculator-tab" data-tab="electricity">Electricity</div>
+        <div class="calculator-tab" data-tab="thermodynamics"
+          >Thermodynamics</div
+        >
+        <div class="calculator-tab" data-tab="waves">Waves & Optics</div>
+        <div class="calculator-tab" data-tab="nuclear">Nuclear Physics</div>
+      </div>
+
+      <div class="calculator-content active" id="mechanicsTab">
+        <div class="formula-card">
+          <div class="formula-title">
+            Velocity
+            <span>v = d/t</span>
+          </div>
+          <div class="formula-equation">v = d/t</div>
+          <div class="formula-description">
+            Calculate the velocity (v) of an object by dividing the distance
+            traveled (d) by the time taken (t).
+          </div>
+          <div class="calculator-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="distance">Distance (m)</label>
+                <input
+                  type="number"
+                  id="distance"
+                  placeholder="Enter distance" />
+              </div>
+              <div class="form-group">
+                <label for="time">Time (s)</label>
+                <input type="number" id="time" placeholder="Enter time" />
+              </div>
+            </div>
+            <button class="calculate-btn" onclick="calculateVelocity()"
+              >Calculate Velocity</button
+            >
+            <div class="result" id="velocityResult" style="display: none">
+              <div class="result-title">Velocity:</div>
+              <div class="result-value" id="velocityValue"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">
+            Acceleration
+            <span>a = (v₂ - v₁)/t</span>
+          </div>
+          <div class="formula-equation">a = (v₂ - v₁)/t</div>
+          <div class="formula-description">
+            Calculate the acceleration (a) of an object by dividing the change
+            in velocity (v₂ - v₁) by the time taken (t).
+          </div>
+          <div class="calculator-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="initialVelocity">Initial Velocity (m/s)</label>
+                <input
+                  type="number"
+                  id="initialVelocity"
+                  placeholder="Enter initial velocity" />
+              </div>
+              <div class="form-group">
+                <label for="finalVelocity">Final Velocity (m/s)</label>
+                <input
+                  type="number"
+                  id="finalVelocity"
+                  placeholder="Enter final velocity" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="accelerationTime">Time (s)</label>
+              <input
+                type="number"
+                id="accelerationTime"
+                placeholder="Enter time" />
+            </div>
+            <button class="calculate-btn" onclick="calculateAcceleration()"
+              >Calculate Acceleration</button
+            >
+            <div class="result" id="accelerationResult" style="display: none">
+              <div class="result-title">Acceleration:</div>
+              <div class="result-value" id="accelerationValue"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">
+            Force
+            <span>F = m × a</span>
+          </div>
+          <div class="formula-equation">F = m × a</div>
+          <div class="formula-description">
+            Calculate the force (F) exerted on an object by multiplying its mass
+            (m) by its acceleration (a).
+          </div>
+          <div class="calculator-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="mass">Mass (kg)</label>
+                <input type="number" id="mass" placeholder="Enter mass" />
+              </div>
+              <div class="form-group">
+                <label for="forceAcceleration">Acceleration (m/s²)</label>
+                <input
+                  type="number"
+                  id="forceAcceleration"
+                  placeholder="Enter acceleration" />
+              </div>
+            </div>
+            <button class="calculate-btn" onclick="calculateForce()"
+              >Calculate Force</button
+            >
+            <div class="result" id="forceResult" style="display: none">
+              <div class="result-title">Force:</div>
+              <div class="result-value" id="forceValue"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calculator-content" id="electricityTab">
+        <div class="formula-card">
+          <div class="formula-title">
+            Ohm's Law
+            <span>V = I × R</span>
+          </div>
+          <div class="formula-equation">V = I × R</div>
+          <div class="formula-description">
+            Calculate the voltage (V) across a conductor by multiplying the
+            current (I) by the resistance (R).
+          </div>
+          <div class="calculator-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="current">Current (A)</label>
+                <input type="number" id="current" placeholder="Enter current" />
+              </div>
+              <div class="form-group">
+                <label for="resistance">Resistance (Ω)</label>
+                <input
+                  type="number"
+                  id="resistance"
+                  placeholder="Enter resistance" />
+              </div>
+            </div>
+            <button class="calculate-btn" onclick="calculateVoltage()"
+              >Calculate Voltage</button
+            >
+            <div class="result" id="voltageResult" style="display: none">
+              <div class="result-title">Voltage:</div>
+              <div class="result-value" id="voltageValue"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calculator-content" id="thermodynamicsTab">
+        <div class="formula-card">
+          <div class="formula-title">
+            Heat Energy
+            <span>Q = m × c × ΔT</span>
+          </div>
+          <div class="formula-equation">Q = m × c × ΔT</div>
+          <div class="formula-description">
+            Calculate the heat energy (Q) by multiplying the mass (m) by the
+            specific heat capacity (c) and the temperature change (ΔT).
+          </div>
+          <div class="calculator-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="heatMass">Mass (kg)</label>
+                <input type="number" id="heatMass" placeholder="Enter mass" />
+              </div>
+              <div class="form-group">
+                <label for="specificHeat"
+                  >Specific Heat Capacity (J/kg·K)</label
+                >
+                <input
+                  type="number"
+                  id="specificHeat"
+                  placeholder="Enter specific heat capacity" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="initialTemp">Initial Temperature (°C)</label>
+                <input
+                  type="number"
+                  id="initialTemp"
+                  placeholder="Enter initial temperature" />
+              </div>
+              <div class="form-group">
+                <label for="finalTemp">Final Temperature (°C)</label>
+                <input
+                  type="number"
+                  id="finalTemp"
+                  placeholder="Enter final temperature" />
+              </div>
+            </div>
+            <button class="calculate-btn" onclick="calculateHeatEnergy()"
+              >Calculate Heat Energy</button
+            >
+            <div class="result" id="heatResult" style="display: none">
+              <div class="result-title">Heat Energy:</div>
+              <div class="result-value" id="heatValue"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calculator-content" id="wavesTab">
+        <div class="formula-card">
+          <div class="formula-title">
+            Wave Speed
+            <span>v = f × λ</span>
+          </div>
+          <div class="formula-equation">v = f × λ</div>
+          <div class="formula-description">
+            Calculate the speed of a wave (v) by multiplying the frequency (f)
+            by the wavelength (λ).
+          </div>
+          <div class="calculator-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="frequency">Frequency (Hz)</label>
+                <input
+                  type="number"
+                  id="frequency"
+                  placeholder="Enter frequency" />
+              </div>
+              <div class="form-group">
+                <label for="wavelength">Wavelength (m)</label>
+                <input
+                  type="number"
+                  id="wavelength"
+                  placeholder="Enter wavelength" />
+              </div>
+            </div>
+            <button class="calculate-btn" onclick="calculateWaveSpeed()"
+              >Calculate Wave Speed</button
+            >
+            <div class="result" id="waveSpeedResult" style="display: none">
+              <div class="result-title">Wave Speed:</div>
+              <div class="result-value" id="waveSpeedValue"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calculator-content" id="nuclearTab">
+        <div class="formula-card">
+          <div class="formula-title">
+            Mass-Energy Equivalence
+            <span>E = mc²</span>
+          </div>
+          <div class="formula-equation">E = mc²</div>
+          <div class="formula-description">
+            Calculate the energy (E) equivalent to a mass (m) using Einstein's
+            famous equation, where c is the speed of light.
+          </div>
+          <div class="calculator-form">
+            <div class="form-group">
+              <label for="energyMass">Mass (kg)</label>
+              <input type="number" id="energyMass" placeholder="Enter mass" />
+            </div>
+            <button class="calculate-btn" onclick="calculateEnergy()"
+              >Calculate Energy</button
+            >
+            <div class="result" id="energyResult" style="display: none">
+              <div class="result-title">Energy:</div>
+              <div class="result-value" id="energyValue"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <div class="toast-icon" id="toastIcon"></div>
+      <div class="toast-message" id="toastMessage"></div>
+      <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p
+        >Designed and developed by
+        <a
+          href="https://www.facebook.com/61560816188544"
+          class="social-link"
+          target="_blank"
+          >@driyqnn</a
+        >
+        | &copy; 2025 School Tools Hub</p
+      >
+      <div class="social-links">
+        <a
+          href="https://www.facebook.com/61560816188544"
+          class="social-link"
+          target="_blank"
+          >Facebook</a
+        >
+      </div>
+    </footer>
+
+    <script>
+      // DOM Elements
+      const hamburgerMenu = document.getElementById("hamburgerMenu");
+      const navMenu = document.getElementById("navMenu");
+      const navMenuOverlay = document.getElementById("navMenuOverlay");
+      const toast = document.getElementById("toast");
+      const toastIcon = document.getElementById("toastIcon");
+      const toastMessage = document.getElementById("toastMessage");
+      const toastClose = document.getElementById("toastClose");
+      const calculatorTabs = document.querySelectorAll(".calculator-tab");
+      const calculatorContents = document.querySelectorAll(
+        ".calculator-content"
+      );
+
+      // Constants
+      const SPEED_OF_LIGHT = 299792458; // m/s
+
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      document.body.classList.toggle("light-theme", savedTheme === "light");
+      updateThemeToggle();
+
+      // Event Listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set up hamburger menu
+        hamburgerMenu.addEventListener("click", toggleNavMenu);
+        navMenuOverlay.addEventListener("click", closeNavMenu);
+
+        // Set up toast close button
+        toastClose.addEventListener("click", hideToast);
+
+        // Set active nav link
+        setActiveNavLink();
+
+        // Set up calculator tabs
+        calculatorTabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const tabId = this.getAttribute("data-tab");
+            switchTab(tabId);
+          });
+        });
+      });
+
+      // Theme toggle functionality
+      function toggleTheme() {
+        document.body.classList.toggle("light-theme");
+        const isLight = document.body.classList.contains("light-theme");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateThemeToggle();
+      }
+
+      function updateThemeToggle() {
+        const isLight = document.body.classList.contains("light-theme");
+        document.getElementById("theme-icon").textContent = isLight
+          ? "☀️"
+          : "🌙";
+        document.getElementById("theme-text").textContent = isLight
+          ? "Light Mode"
+          : "Dark Mode";
+      }
+
+
+      // Switch between calculator tabs
+      function switchTab(tabId) {
+        // Hide all tab contents
+        calculatorContents.forEach((content) => {
+          content.classList.remove("active");
+        });
+
+        // Deactivate all tabs
+        calculatorTabs.forEach((tab) => {
+          tab.classList.remove("active");
+        });
+
+        // Activate selected tab and content
+        document.getElementById(`${tabId}Tab`).classList.add("active");
+        document
+          .querySelector(`.calculator-tab[data-tab="${tabId}"]`)
+          .classList.add("active");
+      }
+
+      // Show toast notification
+      function showToast(message, type = "success") {
+        // Set toast icon based on type
+        let icon = "";
+
+        switch (type) {
+          case "success":
+            icon = "✅";
+            break;
+          case "error":
+            icon = "❌";
+            break;
+          case "warning":
+            icon = "⚠️";
+            break;
+          default:
+            icon = "ℹ️";
+        }
+
+        toastIcon.textContent = icon;
+        toastMessage.textContent = message;
+
+        // Remove existing classes
+        toast.classList.remove("success", "error", "warning");
+
+        // Add new class
+        toast.classList.add(type);
+
+        // Show toast
+        toast.classList.add("show");
+
+        // Hide toast after 3 seconds
+        setTimeout(hideToast, 3000);
+      }
+
+      // Hide toast notification
+      function hideToast() {
+        toast.classList.remove("show");
+      }
+
+      // Physics Calculator Functions
+      function calculateVelocity() {
+        const distance = parseFloat(document.getElementById("distance").value);
+        const time = parseFloat(document.getElementById("time").value);
+
+        if (isNaN(distance) || isNaN(time)) {
+          showToast("Please enter valid values for distance and time", "error");
+          return;
+        }
+
+        if (time === 0) {
+          showToast("Time cannot be zero", "error");
+          return;
+        }
+
+        const velocity = distance / time;
+        document.getElementById(
+          "velocityValue"
+        ).textContent = `${velocity.toFixed(2)} m/s`;
+        document.getElementById("velocityResult").style.display = "block";
+        showToast("Velocity calculated successfully", "success");
+      }
+
+      function calculateAcceleration() {
+        const initialVelocity = parseFloat(
+          document.getElementById("initialVelocity").value
+        );
+        const finalVelocity = parseFloat(
+          document.getElementById("finalVelocity").value
+        );
+        const time = parseFloat(
+          document.getElementById("accelerationTime").value
+        );
+
+        if (isNaN(initialVelocity) || isNaN(finalVelocity) || isNaN(time)) {
+          showToast("Please enter valid values for all fields", "error");
+          return;
+        }
+
+        if (time === 0) {
+          showToast("Time cannot be zero", "error");
+          return;
+        }
+
+        const acceleration = (finalVelocity - initialVelocity) / time;
+        document.getElementById(
+          "accelerationValue"
+        ).textContent = `${acceleration.toFixed(2)} m/s²`;
+        document.getElementById("accelerationResult").style.display = "block";
+        showToast("Acceleration calculated successfully", "success");
+      }
+
+      function calculateForce() {
+        const mass = parseFloat(document.getElementById("mass").value);
+        const acceleration = parseFloat(
+          document.getElementById("forceAcceleration").value
+        );
+
+        if (isNaN(mass) || isNaN(acceleration)) {
+          showToast(
+            "Please enter valid values for mass and acceleration",
+            "error"
+          );
+          return;
+        }
+
+        const force = mass * acceleration;
+        document.getElementById("forceValue").textContent = `${force.toFixed(
+          2
+        )} N`;
+        document.getElementById("forceResult").style.display = "block";
+        showToast("Force calculated successfully", "success");
+      }
+
+      function calculateVoltage() {
+        const current = parseFloat(document.getElementById("current").value);
+        const resistance = parseFloat(
+          document.getElementById("resistance").value
+        );
+
+        if (isNaN(current) || isNaN(resistance)) {
+          showToast(
+            "Please enter valid values for current and resistance",
+            "error"
+          );
+          return;
+        }
+
+        const voltage = current * resistance;
+        document.getElementById(
+          "voltageValue"
+        ).textContent = `${voltage.toFixed(2)} V`;
+        document.getElementById("voltageResult").style.display = "block";
+        showToast("Voltage calculated successfully", "success");
+      }
+
+      function calculateHeatEnergy() {
+        const mass = parseFloat(document.getElementById("heatMass").value);
+        const specificHeat = parseFloat(
+          document.getElementById("specificHeat").value
+        );
+        const initialTemp = parseFloat(
+          document.getElementById("initialTemp").value
+        );
+        const finalTemp = parseFloat(
+          document.getElementById("finalTemp").value
+        );
+
+        if (
+          isNaN(mass) ||
+          isNaN(specificHeat) ||
+          isNaN(initialTemp) ||
+          isNaN(finalTemp)
+        ) {
+          showToast("Please enter valid values for all fields", "error");
+          return;
+        }
+
+        const deltaT = finalTemp - initialTemp;
+        const heatEnergy = mass * specificHeat * deltaT;
+        document.getElementById(
+          "heatValue"
+        ).textContent = `${heatEnergy.toFixed(2)} J`;
+        document.getElementById("heatResult").style.display = "block";
+        showToast("Heat energy calculated successfully", "success");
+      }
+
+      function calculateWaveSpeed() {
+        const frequency = parseFloat(
+          document.getElementById("frequency").value
+        );
+        const wavelength = parseFloat(
+          document.getElementById("wavelength").value
+        );
+
+        if (isNaN(frequency) || isNaN(wavelength)) {
+          showToast(
+            "Please enter valid values for frequency and wavelength",
+            "error"
+          );
+          return;
+        }
+
+        const waveSpeed = frequency * wavelength;
+        document.getElementById(
+          "waveSpeedValue"
+        ).textContent = `${waveSpeed.toFixed(2)} m/s`;
+        document.getElementById("waveSpeedResult").style.display = "block";
+        showToast("Wave speed calculated successfully", "success");
+      }
+
+      function calculateEnergy() {
+        const mass = parseFloat(document.getElementById("energyMass").value);
+
+        if (isNaN(mass)) {
+          showToast("Please enter a valid value for mass", "error");
+          return;
+        }
+
+        const energy = mass * Math.pow(SPEED_OF_LIGHT, 2);
+        document.getElementById(
+          "energyValue"
+        ).textContent = `${energy.toExponential(4)} J`;
+        document.getElementById("energyResult").style.display = "block";
+        showToast("Energy calculated successfully", "success");
+      }
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", function () {
+  // Set up hamburger menu
+  hamburgerMenu.addEventListener("click", toggleNavMenu);
+  navMenuOverlay.addEventListener("click", closeNavMenu);
+
+  // Set up toast close button
+  toastClose.addEventListener("click", hideToast);
+
+  // Set active nav link
+  setActiveNavLink();
+});
+
+// Theme toggle functionality
+function toggleTheme() {
+  document.body.classList.toggle("light-theme");
+  const isLight = document.body.classList.contains("light-theme");
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+  updateThemeToggle();
+}
+
+function updateThemeToggle() {
+  const isLight = document.body.classList.contains("light-theme");
+  document.getElementById("theme-icon").textContent = isLight ? "☀️" : "🌙";
+  document.getElementById("theme-text").textContent = isLight
+    ? "Light Mode"
+    : "Dark Mode";
+}
+
+// Toggle navigation menu
+function toggleNavMenu() {
+  hamburgerMenu.classList.toggle("open");
+  navMenu.classList.toggle("open");
+  navMenuOverlay.classList.toggle("open");
+
+  // Add event listener to close nav menu when clicking outside
+  document.addEventListener("click", closeNavMenuOutside);
+}
+
+// Close navigation menu
+function closeNavMenu() {
+  hamburgerMenu.classList.remove("open");
+  navMenu.classList.remove("open");
+  navMenuOverlay.classList.remove("open");
+
+  // Remove event listener
+  document.removeEventListener("click", closeNavMenuOutside);
+}
+
+// Close nav menu when clicking outside
+function closeNavMenuOutside(event) {
+  if (
+    !navMenu.contains(event.target) &&
+    !hamburgerMenu.contains(event.target)
+  ) {
+    closeNavMenu();
+  }
+}
+
+// Set active nav link based on current page
+function setActiveNavLink() {
+  const currentPage = window.location.pathname.split("/").pop();
+  const navLinks = document.querySelectorAll(".nav-menu-link");
+
+  navLinks.forEach((link) => {
+    const linkPage = link.getAttribute("href");
+    if (linkPage === currentPage) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
+
+// Show toast notification
+function showToast(message, type = "success") {
+  // Set toast icon based on type
+  let icon = "";
+
+  switch (type) {
+    case "success":
+      icon = "✅";
+      break;
+    case "error":
+      icon = "❌";
+      break;
+    case "warning":
+      icon = "⚠️";
+      break;
+    default:
+      icon = "ℹ️";
+  }
+
+  toastIcon.textContent = icon;
+  toastMessage.textContent = message;
+
+  // Remove existing classes
+  toast.classList.remove("success", "error", "warning");
+
+  // Add new class
+  toast.classList.add(type);
+
+  // Show toast
+  toast.classList.add("show");
+
+  // Hide toast after 3 seconds
+  setTimeout(hideToast, 3000);
+}
+
+// Hide toast notification
+function hideToast() {
+  toast.classList.remove("show");
+}
+
+// Replace all alert() calls with showToast()
+window.originalAlert = window.alert;
+window.alert = function (message) {
+  showToast(message, "warning");
+};
+
+    </script>
+     <script src="/js/script.js"></script>
+</html>
