@@ -1,15 +1,7 @@
 :root {
   --primary: #58a6ff;
-  --primary-hover: #1f6feb;
-  --bg-dark: #0d1117;
-  --bg-card: #161b22;
-  --text-light: #c9d1d9;
   --text-muted: #8b949e;
   --border: #30363d;
-  --shadow: rgba(88, 166, 255, 0.2);
-  --danger: #f85149;
-  --success: #56d364;
-  --warning: #e3b341;
 }
 footer {
   text-align: center;

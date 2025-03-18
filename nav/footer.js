@@ -10,6 +10,4 @@ fetch("../nav/footer.css")
     const style = document.createElement("style");
     style.textContent = data;
     document.head.appendChild(style);
-
-    yearElement.textContent = new Date().getFullYear();
   });

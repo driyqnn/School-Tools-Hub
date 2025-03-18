@@ -391,6 +391,7 @@
         }
 
         .container {
+          max-width: 100%;
           padding: 15px;
           margin: 10px auto;
           border-radius: 8px;
@@ -412,14 +413,11 @@
 
         .unit-type-selector {
           display: flex;
-          overflow-x: auto;
+          flex-wrap: wrap;
           padding: 5px 0 10px 0;
-          justify-content: flex-start;
-          flex-wrap: nowrap;
-          -webkit-overflow-scrolling: touch;
+          justify-content: center;
           margin-bottom: 10px;
           width: 100%;
-          scrollbar-width: thin;
         }
 
         .unit-type-btn {
@@ -894,7 +892,7 @@
           </a>
         </li>
         <li class="nav-menu-item">
-          <a href="readability-checker.html" class="nav-menu-link">
+          <a href="readability_checker.html" class="nav-menu-link">
             <span>Readability Checker</span>
           </a>
         </li>
@@ -906,11 +904,6 @@
         <li class="nav-menu-item">
           <a href="text_case_converter.html" class="nav-menu-link">
             <span>Text Case Converter</span>
-          </a>
-        </li>
-        <li class="nav-menu-item">
-          <a href="word_counter.html" class="nav-menu-link">
-            <span>Word Counter</span>
           </a>
         </li>
         <li class="nav-menu-item">
@@ -1013,7 +1006,27 @@
             <select id="fromUnit"></select>
           </div>
 
-          <button class="swap-btn" id="swapBtn" title="Swap units">⇄</button>
+          <button class="swap-btn" id="swapBtn" title="Swap units"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              color="currentColor"
+              fill="none">
+              <path
+                d="M19 9H6.65856C5.65277 9 5.14987 9 5.02472 8.69134C4.89957 8.38268 5.25517 8.01942 5.96637 7.29289L8.21091 5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path
+                d="M5 15H17.3414C18.3472 15 18.8501 15 18.9753 15.3087C19.1004 15.6173 18.7448 15.9806 18.0336 16.7071L15.7891 19"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round" /></svg
+          ></button>
 
           <div class="input-group">
             <label for="toValue">Result</label>
@@ -1071,9 +1084,7 @@
       </div>
     </div>
 
-    <footer>
-      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
-    </footer>
+    <footer id="footer-placeholder"></footer>
 
     <script>
       // Unit conversion data
@@ -1129,6 +1140,7 @@
             celsius: { name: "Celsius (°C)" },
             fahrenheit: { name: "Fahrenheit (°F)" },
             kelvin: { name: "Kelvin (K)" },
+            rankine: { name: "Rankine (°R)" },
           },
           // Special conversion functions for temperature
           convert: function (value, fromUnit, toUnit) {
@@ -1140,6 +1152,8 @@
               kelvin = value + 273.15;
             } else if (fromUnit === "fahrenheit") {
               kelvin = (value + 459.67) * (5 / 9);
+            } else if (fromUnit === "rankine") {
+              kelvin = value * (5 / 9);
             } else {
               // fromUnit is already kelvin
               kelvin = value;
@@ -1150,6 +1164,8 @@
               return kelvin - 273.15;
             } else if (toUnit === "fahrenheit") {
               return kelvin * (9 / 5) - 459.67;
+            } else if (toUnit === "rankine") {
+              return kelvin * (9 / 5);
             } else {
               // toUnit is kelvin
               return kelvin;
@@ -1161,14 +1177,26 @@
               return "°F = (°C × 9/5) + 32";
             } else if (fromUnit === "celsius" && toUnit === "kelvin") {
               return "K = °C + 273.15";
+            } else if (fromUnit === "celsius" && toUnit === "rankine") {
+              return "°R = °C × 9/5";
             } else if (fromUnit === "fahrenheit" && toUnit === "celsius") {
               return "°C = (°F - 32) × 5/9";
             } else if (fromUnit === "fahrenheit" && toUnit === "kelvin") {
               return "K = (°F + 459.67) × 5/9";
+            } else if (fromUnit === "fahrenheit" && toUnit === "rankine") {
+              return "°R = °F + 459.67";
             } else if (fromUnit === "kelvin" && toUnit === "celsius") {
               return "°C = K - 273.15";
             } else if (fromUnit === "kelvin" && toUnit === "fahrenheit") {
               return "°F = K × 9/5 - 459.67";
+            } else if (fromUnit === "kelvin" && toUnit === "rankine") {
+              return "°R = K × 9/5";
+            } else if (fromUnit === "rankine" && toUnit === "celsius") {
+              return "°C = °R × 5/9";
+            } else if (fromUnit === "rankine" && toUnit === "fahrenheit") {
+              return "°F = °R - 459.67";
+            } else if (fromUnit === "rankine" && toUnit === "kelvin") {
+              return "K = °R × 5/9";
             } else {
               return "No conversion needed";
             }
@@ -1195,6 +1223,11 @@
               <p>Step 1: Add 273.15 to the Celsius temperature.</p>
               <p>Step 2: ${value} + 273.15 = ${result.toFixed(4)}</p>
             `;
+            } else if (fromUnit === "celsius" && toUnit === "rankine") {
+              steps = `
+              <p>Step 1: Multiply the Celsius temperature by 9/5.</p>
+              <p>Step 2: ${value} × 9/5 = ${((value * 9) / 5).toFixed(4)}</p>
+            `;
             } else if (fromUnit === "fahrenheit" && toUnit === "celsius") {
               steps = `
               <p>Step 1: Subtract 32 from the Fahrenheit temperature.</p>
@@ -1213,6 +1246,11 @@
                 4
               )} × 5/9 = ${result.toFixed(4)}</p>
             `;
+            } else if (fromUnit === "fahrenheit" && toUnit === "rankine") {
+              steps = `
+              <p>Step 1: Add 459.67 to the Fahrenheit temperature.</p>
+              <p>Step 2: ${value} + 459.67 = ${result.toFixed(4)}</p>
+            `;
             } else if (fromUnit === "kelvin" && toUnit === "celsius") {
               steps = `
               <p>Step 1: Subtract 273.15 from the Kelvin temperature.</p>
@@ -1226,6 +1264,26 @@
               <p>Step 4: ${((value * 9) / 5).toFixed(
                 4
               )} - 459.67 = ${result.toFixed(4)}</p>
+            `;
+            } else if (fromUnit === "kelvin" && toUnit === "rankine") {
+              steps = `
+              <p>Step 1: Multiply the Kelvin temperature by 9/5.</p>
+              <p>Step 2: ${value} × 9/5 = ${((value * 9) / 5).toFixed(4)}</p>
+            `;
+            } else if (fromUnit === "rankine" && toUnit === "celsius") {
+              steps = `
+              <p>Step 1: Divide the Rankine temperature by 9/5.</p>
+              <p>Step 2: ${value} × 5/9 = ${((value * 5) / 9).toFixed(4)}</p>
+            `;
+            } else if (fromUnit === "rankine" && toUnit === "fahrenheit") {
+              steps = `
+              <p>Step 1: Subtract 459.67 from the Rankine temperature.</p>
+              <p>Step 2: ${value} - 459.67 = ${result.toFixed(4)}</p>
+            `;
+            } else if (fromUnit === "rankine" && toUnit === "kelvin") {
+              steps = `
+              <p>Step 1: Divide the Rankine temperature by 9/5.</p>
+              <p>Step 2: ${value} × 5/9 = ${((value * 5) / 9).toFixed(4)}</p>
             `;
             }
 
@@ -1377,47 +1435,6 @@
 
         // Perform initial conversion
         performConversion();
-      });
-
-      // Add horizontal scroll with arrow keys for unit type selector
-      document.addEventListener("DOMContentLoaded", function () {
-        const unitTypeSelector = document.getElementById("unitTypeSelector");
-
-        // Add keyboard navigation for horizontal scrolling
-        unitTypeSelector.addEventListener("keydown", function (e) {
-          if (e.key === "ArrowRight") {
-            unitTypeSelector.scrollLeft += 100;
-            e.preventDefault();
-          } else if (e.key === "ArrowLeft") {
-            unitTypeSelector.scrollLeft -= 100;
-            e.preventDefault();
-          }
-        });
-
-        // Add touch scroll indicator for mobile
-        if (window.innerWidth <= 768) {
-          const indicator = document.createElement("div");
-          indicator.style.textAlign = "center";
-          indicator.style.color = "var(--text-muted)";
-          indicator.style.fontSize = "0.8rem";
-          indicator.style.marginTop = "5px";
-          indicator.textContent = "Swipe to see more unit types →";
-
-          // Insert after unit type selector
-          unitTypeSelector.parentNode.insertBefore(
-            indicator,
-            unitTypeSelector.nextSibling
-          );
-
-          // Hide indicator after first scroll
-          unitTypeSelector.addEventListener(
-            "scroll",
-            function () {
-              indicator.style.display = "none";
-            },
-            { once: true }
-          );
-        }
       });
 
       // Theme toggle functionality
@@ -1658,7 +1675,9 @@
           historyItem.className = "history-item";
           historyItem.onclick = () => loadFromHistory(item);
 
-          const favoriteIcon = item.isFavorite ? "★" : "☆";
+          const favoriteIcon = item.isFavorite
+            ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path fill="#141B34" fill-rule="evenodd" d="M10.677 2.954c.655-1.272 2.49-1.272 3.146 0l2.206 4.288c.037.071.106.121.185.134l4.797.756c1.422.224 1.99 1.95.972 2.961l-3.434 3.41a.25.25 0 0 0-.07.215l.756 4.758c.225 1.41-1.26 2.478-2.544 1.83l-4.326-2.183a.25.25 0 0 0-.23 0L7.81 21.306c-1.285.648-2.77-.42-2.545-1.83l.756-4.758a.25.25 0 0 0-.07-.216l-3.434-3.409c-1.017-1.01-.45-2.737.972-2.961l4.797-.756a.25.25 0 0 0 .185-.134z" clip-rule="evenodd"/></svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path stroke="#141B34" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m13.728 3.444 1.76 3.549c.24.494.88.968 1.42 1.058l3.189.535c2.04.343 2.52 1.835 1.05 3.307l-2.48 2.5c-.42.423-.65 1.24-.52 1.825l.71 3.095c.56 2.45-.73 3.397-2.88 2.117l-2.99-1.785c-.54-.322-1.43-.322-1.98 0L8.019 21.43c-2.14 1.28-3.44.322-2.88-2.117l.71-3.095c.13-.585-.1-1.402-.52-1.825l-2.48-2.5C1.39 10.42 1.86 8.929 3.899 8.586l3.19-.535c.53-.09 1.17-.564 1.41-1.058l1.76-3.549c.96-1.925 2.52-1.925 3.47 0"/></svg>`;
           const favoriteColor = item.isFavorite
             ? "var(--warning)"
             : "var(--text-muted)";
@@ -1805,10 +1824,34 @@
           updateHistoryList();
           updateFavoritesList();
           saveData();
+
+          showToast("Conversion history cleared!", 2000);
         }
+      }
+
+      // Show notification
+      function showNotification(message, type = "success") {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.className = "notification";
+
+        if (type === "warning") {
+          notification.style.background = "var(--warning)";
+        } else if (type === "error") {
+          notification.style.background = "var(--danger)";
+        } else {
+          notification.style.background = "var(--success)";
+        }
+
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
       }
     </script>
     <script src="/js/script.js"></script>
     <script src="../nav/nav.js"></script>
+    <script src="../nav/footer.js"></script>
   </body>
 </html>

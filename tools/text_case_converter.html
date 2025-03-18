@@ -881,11 +881,57 @@
 
           <div class="action-buttons">
             <button class="action-btn secondary" onclick="copyToInput()">
-              <span>⬆️</span> Use as Input
+              <span
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  color="currentColor"
+                  fill="none">
+                  <path
+                    d="M9.5 10.5C9.99153 9.9943 11.2998 8 12 8M14.5 10.5C14.0085 9.9943 12.7002 8 12 8M12 8V16"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path
+                    d="M2.5 12C2.5 7.52166 2.5 5.28249 3.89124 3.89124C5.28249 2.5 7.52166 2.5 12 2.5C16.4783 2.5 18.7175 2.5 20.1088 3.89124C21.5 5.28249 21.5 7.52166 21.5 12C21.5 16.4783 21.5 18.7175 20.1088 20.1088C18.7175 21.5 16.4783 21.5 12 21.5C7.52166 21.5 5.28249 21.5 3.89124 20.1088C2.5 18.7175 2.5 16.4783 2.5 12Z"
+                    stroke="currentColor"
+                    stroke-width="1.5" /></svg
+              ></span>
+              Use as Input
             </button>
 
             <button class="action-btn" onclick="copyToClipboard()">
-              <span>📋</span> Copy to Clipboard
+              <span
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  color="currentColor"
+                  fill="none">
+                  <path
+                    d="M3.5 9.36842C3.5 5.89491 3.5 4.15816 4.52513 3.07908C5.55025 2 7.20017 2 10.5 2H13.5C16.7998 2 18.4497 2 19.4749 3.07908C20.5 4.15816 20.5 5.89491 20.5 9.36842V14.6316C20.5 18.1051 20.5 19.8418 19.4749 20.9209C18.4497 22 16.7998 22 13.5 22H10.5C7.20017 22 5.55025 22 4.52513 20.9209C3.5 19.8418 3.5 18.1051 3.5 14.6316V9.36842Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path
+                    d="M8 2L8.0822 2.4932C8.28174 3.69044 8.38151 4.28906 8.80113 4.64453C9.22075 5 9.82762 5 11.0414 5H12.9586C14.1724 5 14.7793 5 15.1989 4.64453C15.6185 4.28906 15.7183 3.69044 15.9178 2.4932L16 2"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path
+                    d="M8 16H12M8 11H16"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round" />
+                </svg>
+              </span>
+              Copy to Clipboard
             </button>
           </div>
         </div>
@@ -924,9 +970,7 @@
 
     <div class="toast" id="toast"></div>
 
-    <footer>
-      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
-    </footer>
+    <footer id="footer-placeholder"></footer>
 
     <script>
       // Load saved theme preference
@@ -1312,5 +1356,7 @@
       };
     </script>
     <script src="/js/script.js"></script>
+    <script src="../nav/nav.js"></script>
+    <script src="../nav/footer.js"></script>
   </body>
 </html>

@@ -514,6 +514,7 @@
 
       @media (max-width: 768px) {
         .container {
+          max-width: 100%;
           padding: 20px;
         }
 
@@ -570,6 +571,22 @@
 
         .tab {
           padding: 8px 15px;
+          font-size: 0.9rem;
+        }
+
+        .word-of-day-definition {
+          font-size: 0.9rem;
+        }
+
+        .word-of-day-example {
+          font-size: 0.9rem;
+        }
+
+        .word-of-day-synonyms {
+          font-size: 0.9rem;
+        }
+
+        .word-of-day-antonyms {
           font-size: 0.9rem;
         }
 
@@ -1075,10 +1092,77 @@
         <button
           class="search-btn"
           onclick="searchWord(document.getElementById('searchInput').value)">
-          <span>🔍</span> Search
+          <span
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              color="currentColor"
+              fill="none">
+              <path
+                d="M17.5 17.5L22 22"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path
+                d="M20 11C20 6.02944 15.9706 2 11 2C6.02944 2 2 6.02944 2 11C2 15.9706 6.02944 20 11 20C15.9706 20 20 15.9706 20 11Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linejoin="round" />
+            </svg>
+          </span>
+          Search
         </button>
         <button class="random-btn" onclick="getRandomWord()">
-          <span>🎲</span> Random
+          <span
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              color="currentColor"
+              fill="none">
+              <path
+                d="M12 21C15.7497 21 17.6246 21 18.9389 20.0451C19.3634 19.7367 19.7367 19.3634 20.0451 18.9389C21 17.6246 21 15.7497 21 12C21 8.25027 21 6.3754 20.0451 5.06107C19.7367 4.6366 19.3634 4.26331 18.9389 3.95492C17.6246 3 15.7497 3 12 3C8.25027 3 6.3754 3 5.06107 3.95491C4.6366 4.26331 4.26331 4.6366 3.95492 5.06107C3 6.3754 3 8.25027 3 12C3 15.7497 3 17.6246 3.95491 18.9389C4.26331 19.3634 4.6366 19.7367 5.06107 20.0451C6.3754 21 8.25027 21 12 21Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path
+                d="M12 12V12.01"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path
+                d="M16 8V8.01"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path
+                d="M8 16V16.01"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path
+                d="M8 8V8.01"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path
+                d="M16 16V16.01"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </span>
+          Random
         </button>
       </div>
 
@@ -1111,8 +1195,33 @@
               class="audio-btn"
               id="audioBtn"
               title="Listen to pronunciation"
-              >🔊</button
-            >
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                color="currentColor"
+                fill="none">
+                <path
+                  d="M14 14.8135V9.18646C14 6.04126 14 4.46866 13.0747 4.0773C12.1494 3.68593 11.0603 4.79793 8.88232 7.02192C7.75439 8.17365 7.11085 8.42869 5.50604 8.42869C4.10257 8.42869 3.40084 8.42869 2.89675 8.77262C1.85035 9.48655 2.00852 10.882 2.00852 12C2.00852 13.118 1.85035 14.5134 2.89675 15.2274C3.40084 15.5713 4.10257 15.5713 5.50604 15.5713C7.11085 15.5713 7.75439 15.8264 8.88232 16.9781C11.0603 19.2021 12.1494 20.3141 13.0747 19.9227C14 19.5313 14 17.9587 14 14.8135Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M17 9C17.6254 9.81968 18 10.8634 18 12C18 13.1366 17.6254 14.1803 17 15"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M20 7C21.2508 8.36613 22 10.1057 22 12C22 13.8943 21.2508 15.6339 20 17"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
           </div>
 
           <div class="meanings-container" id="meaningsContainer">
@@ -1235,9 +1344,7 @@
       </div>
     </div>
 
-    <footer>
-      <p>Designed and developed by @driyqnn | &copy; 2025 School Tools Hub</p>
-    </footer>
+    <footer id="footer-placeholder"></footer>
 
     <audio id="pronunciationAudio"></audio>
 
@@ -1629,5 +1736,6 @@
     </script>
     <script src="/js/script.js"></script>
     <script src="../nav/nav.js"></script>
+    <script src="../nav/footer.js"></script>
   </body>
 </html>
